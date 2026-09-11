@@ -37,6 +37,21 @@ kotlin {
         }
         commonMain.dependencies {
             api(project(":core"))
+
+            // Koin
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+
+            // Navigation
+            implementation(libs.navigation.compose)
+
+            // Serialization
+            implementation(libs.kotlinx.serialization.json)
+
+            // Room
+            implementation(libs.room.runtime)
+
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
