@@ -2,6 +2,9 @@ package com.whereisthesolution.whereisihesolutionapp.di
 
 import androidx.room.RoomDatabase
 import com.whereisthesolution.whereisihesolutionapp.data.database.AppDatabase
+import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.login.LoginViewModel
+import com.whereisthesolution.whereisihesolutionapp.repository.UserRepository
+import com.whereisthesolution.whereisihesolutionapp.repository.UserRepositoryImpl
 import org.koin.dsl.module
 
 
@@ -13,8 +16,19 @@ val databaseModule = module {
     }
 
     // Injeta os DAOs normalmente
+
     single { get<AppDatabase>().userDao() }
     single { get<AppDatabase>().postDao() }
+    single<UserRepository> {
+        UserRepositoryImpl(
+            userDao = get()
+        )
+    }
+    single {
+        LoginViewModel(
+            repository = get()
+        )
+    }
 }
 
 

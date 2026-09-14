@@ -11,10 +11,11 @@ data class UserEntity(
     @PrimaryKey val id: Long,
     val name: String,
     val email: String,
+    val password: String,
     val cpfHash: String?,
     val avatarUrl: String?,
-    val privacyLevel: String, // Pode ser gravado como String ou int via TypeConverter
-    val reputationScore: Int,
+    val privacyLevel: String?,
+    val reputationScore: Int?,
     val isVerified: Boolean,
     val mainNeighborhood: String?,
     val city: String?,

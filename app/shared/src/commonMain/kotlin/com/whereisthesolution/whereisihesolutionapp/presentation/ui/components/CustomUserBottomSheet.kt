@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CustomUserBottomSheet(
     onDismissRequest: () -> Unit,
-    onSubmit: (name: String, email: String) -> Unit
+    onSubmit: (name: String, city: String, email: String, password: String) -> Unit
 ) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -141,7 +141,7 @@ fun CustomUserBottomSheet(
                 onClick = {
                     if (password == passwordConfirm) {
                         isLoading = true
-                        onSubmit(name, email)
+                        onSubmit(name, selectedCity, email, password)
                     }
                 },
                 modifier = Modifier

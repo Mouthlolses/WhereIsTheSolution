@@ -52,7 +52,7 @@ import whereisthesolution.app.shared.generated.resources.icon_visible
 @Composable
 fun LoginScreen(
     onLoginClick: () -> Unit,
-    onRegisterUser: (name: String, email: String) -> Unit = { name, email ->
+    onRegisterUser: (name: String, city: String, email: String, password: String) -> Unit = { name, city, email, password ->
 
     },
     onForgotPasswordClick: () -> Unit = {}
@@ -77,8 +77,8 @@ fun LoginScreen(
             ) {
                 CustomUserBottomSheet(
                     onDismissRequest = { showCreateUserSheet = false },
-                    onSubmit = { name, email ->
-                        onRegisterUser(name, email)
+                    onSubmit = { name, city, email, password ->
+                        onRegisterUser(name, city, email, password)
                     }
                 )
             }
@@ -330,7 +330,7 @@ fun LoginScreen(
 fun LoginScreenPreview() {
     LoginScreen(
         onLoginClick = {},
-        onRegisterUser = { name, email ->
+        onRegisterUser = { name, city, email, password ->
 
         },
         onForgotPasswordClick = {}
