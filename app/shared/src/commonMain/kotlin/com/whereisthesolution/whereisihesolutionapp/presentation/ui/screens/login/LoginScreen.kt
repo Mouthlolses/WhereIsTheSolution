@@ -43,6 +43,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.whereisthesolution.whereisihesolutionapp.presentation.ui.components.CustomUserBottomSheet
 import org.jetbrains.compose.resources.painterResource
 import whereisthesolution.app.shared.generated.resources.Res
 import whereisthesolution.app.shared.generated.resources.icon_invisible
@@ -50,13 +51,16 @@ import whereisthesolution.app.shared.generated.resources.icon_visible
 
 @Composable
 fun LoginScreen(
-    onLoginClick: () -> Unit = {},
-    onRegisterClick: () -> Unit = {},
+    onLoginClick: () -> Unit,
+    onRegisterUser: (name: String, email: String) -> Unit = { name, email ->
+
+    },
     onForgotPasswordClick: () -> Unit = {}
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var showCreateUserSheet by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier
@@ -64,6 +68,21 @@ fun LoginScreen(
         containerColor = Color(0xFFF7F9FC),
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { paddingValues ->
+
+        if (showCreateUserSheet) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                CustomUserBottomSheet(
+                    onDismissRequest = { showCreateUserSheet = false },
+                    onSubmit = { name, email ->
+                        onRegisterUser(name, email)
+                    }
+                )
+            }
+        }
 
         Box(
             modifier = Modifier
@@ -191,7 +210,7 @@ fun LoginScreen(
                                             else
                                                 "Mostrar senha",
                                         modifier = Modifier
-                                            .size(24.dp)
+                                            .size(16.dp)
                                     )
                                 }
                             },
@@ -269,7 +288,9 @@ fun LoginScreen(
                         Spacer(modifier = Modifier.height(22.dp))
 
                         OutlinedButton(
-                            onClick = onRegisterClick,
+                            onClick = {
+                                showCreateUserSheet = true
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(52.dp),
@@ -307,5 +328,11 @@ fun LoginScreen(
 )
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen()
+    LoginScreen(
+        onLoginClick = {},
+        onRegisterUser = { name, email ->
+
+        },
+        onForgotPasswordClick = {}
+    )
 }
