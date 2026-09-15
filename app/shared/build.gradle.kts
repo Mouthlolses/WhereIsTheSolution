@@ -5,7 +5,9 @@ plugins {
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-}
+
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)}
 
 kotlin {
     
@@ -53,6 +55,7 @@ kotlin {
 
             // Room
             implementation(libs.room.runtime)
+            implementation(libs.sqlite.bundled)
 
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
@@ -69,6 +72,11 @@ kotlin {
     }
 }
 
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
 dependencies {
     androidRuntimeClasspath(libs.compose.uiTooling)
+    add("kspAndroid", libs.room.compiler)
 }

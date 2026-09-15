@@ -28,8 +28,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +47,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.components.CustomUserBottomSheet
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOf
 import org.jetbrains.compose.resources.painterResource
 import whereisthesolution.app.shared.generated.resources.Res
 import whereisthesolution.app.shared.generated.resources.icon_invisible
@@ -52,6 +58,8 @@ import whereisthesolution.app.shared.generated.resources.icon_visible
 @Composable
 fun LoginScreen(
     onLoginClick: () -> Unit,
+    onNavigationToHome: () -> Unit,
+    uiEvent: Flow<LoginUiEvent>,
     onRegisterUser: (name: String, city: String, email: String, password: String) -> Unit = { name, city, email, password ->
 
     },
@@ -62,9 +70,31 @@ fun LoginScreen(
     var passwordVisible by remember { mutableStateOf(false) }
     var showCreateUserSheet by remember { mutableStateOf(false) }
 
+    val snackBarState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        uiEvent.collect { event ->
+
+            when (event) {
+                LoginUiEvent.NavigateToHome -> {
+                    onNavigationToHome()
+                }
+
+                is LoginUiEvent.ShowError -> {
+                    snackBarState.showSnackbar("Error")
+                }
+            }
+        }
+    }
+
     Scaffold(
         modifier = Modifier
             .navigationBarsPadding(),
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackBarState
+            )
+        },
         containerColor = Color(0xFFF7F9FC),
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { paddingValues ->
@@ -333,6 +363,8 @@ fun LoginScreenPreview() {
         onRegisterUser = { name, city, email, password ->
 
         },
-        onForgotPasswordClick = {}
+        onForgotPasswordClick = {},
+        onNavigationToHome = {},
+        uiEvent = flowOf()
     )
 }

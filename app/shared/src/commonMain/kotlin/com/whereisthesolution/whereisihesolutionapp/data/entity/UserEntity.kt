@@ -8,7 +8,10 @@ import androidx.room.Relation
 
 @Entity(tableName = "users")
 data class UserEntity(
-    @PrimaryKey val id: Long,
+
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0L,
+
     val name: String,
     val email: String,
     val password: String,
@@ -19,7 +22,7 @@ data class UserEntity(
     val isVerified: Boolean,
     val mainNeighborhood: String?,
     val city: String?,
-    val createdAtTimestamp: Long,
+    val createdAtTimestamp: Long?,
     val isActive: Boolean
 )
 
