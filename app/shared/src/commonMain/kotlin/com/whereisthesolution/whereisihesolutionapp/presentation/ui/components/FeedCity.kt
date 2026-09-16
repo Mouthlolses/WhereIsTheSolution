@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -37,23 +36,23 @@ import whereisthesolution.app.shared.generated.resources.icon_visible
 @Composable
 fun FeedCity(
     modifier: Modifier = Modifier,
-    content: LazyListScope.() -> Unit = {
-        items(postList){ postList ->
+    userOwnerName: String = "João",
+    userOwnerCity: String = "Crato",
+    commentsLength: Int = 1
+
+) {
+    LazyColumn(
+        modifier = modifier
+    ) {
+        items(postList) {
             MockPostage(
-                userOwnerName = postList.userOwner,
-                userOwnerCity = postList.userOwnerCity,
-                commentsLength = postList.comments.size
+                userOwnerName = userOwnerName,
+                userOwnerCity = userOwnerCity,
+                commentsLength = commentsLength
             )
         }
     }
-) {
-    LazyColumn(
-        modifier = modifier,
-        content = content
-    )
 }
-
-
 
 
 @Composable
@@ -227,7 +226,6 @@ fun MockPostage(
 }
 
 
-
 val postList = listOf(
     Post(
         id = 1,
@@ -247,7 +245,7 @@ val postList = listOf(
         userOwnerCity = "Crato, CE",
         image = Res.drawable.icon_invisible,
         iconsInteraction = listOf(
-            "Like","Comment"
+            "Like", "Comment"
         ),
         comments = listOf(
             "Gostei disso",

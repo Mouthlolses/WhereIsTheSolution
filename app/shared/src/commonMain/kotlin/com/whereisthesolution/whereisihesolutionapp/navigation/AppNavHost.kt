@@ -1,11 +1,14 @@
 package com.whereisthesolution.whereisihesolutionapp.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.whereisthesolution.whereisihesolutionapp.data.entity.UserEntity
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.home.HomeScreen
+import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.home.HomeViewModel
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.login.LoginScreen
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.login.LoginViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -50,7 +53,13 @@ fun AppNavHost() {
             )
         }
         composable(route = "home") {
-            HomeScreen()
+
+            val viewmodel: HomeViewModel = koinViewModel()
+            val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
+
+            HomeScreen(
+                uiState = uiState
+            )
         }
     }
 }

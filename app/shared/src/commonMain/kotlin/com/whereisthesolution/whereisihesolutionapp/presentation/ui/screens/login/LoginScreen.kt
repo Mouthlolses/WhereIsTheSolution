@@ -48,7 +48,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.components.CustomUserBottomSheet
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
 import org.jetbrains.compose.resources.painterResource
 import whereisthesolution.app.shared.generated.resources.Res

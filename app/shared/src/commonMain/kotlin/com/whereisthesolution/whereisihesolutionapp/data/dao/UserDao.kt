@@ -25,7 +25,7 @@ interface UserDao {
 
     // 4. Observar em tempo real os dados do usuário logado (Reativo com Flow)
     @Query("SELECT * FROM users WHERE id = :userId")
-    fun observeUserById(userId: String): Flow<UserEntity?>
+    fun observeUserById(userId: Long): Flow<UserEntity?>
 
     // 5. Deletar a conta do usuário (Como o PostEntity tem CASCADE, apaga os posts dele também)
     @Query("DELETE FROM users WHERE id = :userId")
