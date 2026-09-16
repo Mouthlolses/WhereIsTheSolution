@@ -23,7 +23,6 @@ fun AppNavHost() {
 
             val viewmodel: LoginViewModel = koinViewModel()
 
-
             LoginScreen(
                 onLoginClick = {
                     navController.navigate("home")

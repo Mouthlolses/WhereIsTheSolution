@@ -21,7 +21,8 @@ import whereisthesolution.app.shared.generated.resources.icon_visible
 @Preview(showBackground = true)
 @Composable
 fun CustomTopAppBar(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    openUserModal: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -32,7 +33,9 @@ fun CustomTopAppBar(
         modifier = modifier,
         navigationIcon = {
             IconButton(
-                onClick = {}
+                onClick = {
+                    openUserModal()
+                }
             ) {
                 Image(
                     painter = painterResource(Res.drawable.icon_visible),
