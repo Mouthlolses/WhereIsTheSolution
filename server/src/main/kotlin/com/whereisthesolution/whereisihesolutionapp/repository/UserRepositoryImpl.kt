@@ -18,6 +18,7 @@ class UserRepositoryImpl : UserRepository {
             val id = UsersTable.insert {
                 it[name] = user.user.name
                 it[email] = user.user.email
+                it[passwordHash] = user.passwordHash
             } get UsersTable.id
 
             user.user.copy(id = id)
