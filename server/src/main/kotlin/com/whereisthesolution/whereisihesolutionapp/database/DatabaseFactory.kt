@@ -8,11 +8,15 @@ import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 object DatabaseFactory {
 
     fun init() {
+        val jdbcUrl = System.getenv("DATABASE_URL") ?: "jdbc:postgresql://localhost:5433/whereisthesolution"
+        val dbUser = System.getenv("DATABASE_USER") ?: "postgres"
+        val dbPassword = System.getenv("DATABASE_PASSWORD") ?: "postgres"
+
         Database.connect(
-            url = "jdbc:postgresql://localhost:5433/whereisthesolution",
+            url = jdbcUrl,
             driver = "org.postgresql.Driver",
-            user = "postgres",
-            password = "postgres"
+            user = dbUser,
+            password = dbPassword
         )
 
         transaction {

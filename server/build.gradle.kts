@@ -5,7 +5,7 @@ plugins {
 }
 
 
-    group = "com.whereisthesolution.whereisihesolutionapp"
+group = "com.whereisthesolution.whereisihesolutionapp"
 version = "1.0.0"
 application {
     mainClass = "com.whereisthesolution.whereisihesolutionapp.ApplicationKt"
