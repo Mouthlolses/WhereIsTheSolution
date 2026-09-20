@@ -4,8 +4,8 @@ COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 RUN ./gradlew shadowJar --no-daemon
 
-# 2. Estágio de Execução da imagem final
-FROM openjdk:17-slim
+# 2. Estágio de Execução da imagem final (Imagem atualizada)
+FROM eclipse-temurin:17-jre
 EXPOSE 8080
 COPY --from=build /home/gradle/src/build/libs/*.jar /app/ktor-app.jar
 ENTRYPOINT ["java", "-jar", "/app/ktor-app.jar"]
