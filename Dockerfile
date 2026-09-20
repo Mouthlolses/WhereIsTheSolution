@@ -1,11 +1,14 @@
-# 1. Estágio de Build usando Gradle e JDK 17
+# 1. Estágio de Build
 FROM gradle:8.5-jdk17 AS build
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
-RUN ./gradlew shadowJar --no-daemon
 
-# 2. Estágio de Execução da imagem final (Imagem atualizada)
+# Executa o build sem daemon
+RUN ./gradlew buildFatJar --no-daemon || ./gradlew shadowJar --no-daemon || ./gradlew build -x test --no-daemon
+
+# 2. Estágio de Execução
 FROM eclipse-temurin:17-jre
 EXPOSE 8080
-COPY --from=build /home/gradle/src/build/libs/*.jar /app/ktor-app.jar
+WORKDIR /app
+COPY --from=build /home/gradle/src/build/libs/*-all.jar /app/ktor-app.jar || COPY --from=build /home/gradle/src/build/libs/*.jar /app/ktor-app.jar
 ENTRYPOINT ["java", "-jar", "/app/ktor-app.jar"]
