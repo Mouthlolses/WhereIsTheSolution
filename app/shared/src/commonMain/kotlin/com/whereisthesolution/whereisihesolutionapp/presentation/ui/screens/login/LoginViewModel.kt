@@ -3,6 +3,7 @@ package com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereisthesolution.whereisihesolutionapp.data.entity.UserEntity
+import com.whereisthesolution.whereisihesolutionapp.network.dto.RegisterUserRequest
 import com.whereisthesolution.whereisihesolutionapp.repository.UserRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -16,10 +17,10 @@ class LoginViewModel(
     private val _uiEvent = Channel<LoginUiEvent>(Channel.BUFFERED)
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    fun registerUser(user: UserEntity) {
+    fun registerUser(userRequest: RegisterUserRequest) {
         viewModelScope.launch {
             try {
-                repository.registerUser(user)
+                repository.registerUser(userRequest)
                     .onSuccess {
                         _uiEvent.send(LoginUiEvent.NavigateToHome)
                     }

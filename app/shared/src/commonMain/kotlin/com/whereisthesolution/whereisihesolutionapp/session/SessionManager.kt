@@ -1,19 +1,35 @@
 package com.whereisthesolution.whereisihesolutionapp.session
 
-class SessionManager {
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-    private var loggedUserId: Long? = null
+class SessionManager(
+    private val dataStore: DataStore<Preferences>
+) {
 
-    fun login(userId: Long) {
-        loggedUserId = userId
+    private companion object {
+        val LOGGED_USER_ID = longPreferencesKey("logged_user_id")
     }
 
-    fun getLoggedUserId(): Long? {
-        return loggedUserId
+    val loggedUserId: Flow<Long?> =
+        dataStore.data.map { preferences ->
+            preferences[LOGGED_USER_ID]
+        }
+
+    suspend fun login(userId: Long) {
+        dataStore.edit { preferences ->
+            preferences[LOGGED_USER_ID] = userId
+        }
     }
 
-    fun logout() {
-        loggedUserId = null
+    suspend fun logout() {
+        dataStore.edit { preferences ->
+            preferences.remove(LOGGED_USER_ID)
+        }
     }
 
 }

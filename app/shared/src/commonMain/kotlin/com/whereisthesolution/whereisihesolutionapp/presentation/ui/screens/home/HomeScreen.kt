@@ -32,7 +32,8 @@ fun HomeScreen(
         CircularProgressIndicator()
     } else {
         CustomModalNavigationDrawer(
-            drawerState = drawerState
+            ownerName = user?.name ?: "",
+            drawerState = drawerState,
         ) {
             Scaffold(
                 topBar = {

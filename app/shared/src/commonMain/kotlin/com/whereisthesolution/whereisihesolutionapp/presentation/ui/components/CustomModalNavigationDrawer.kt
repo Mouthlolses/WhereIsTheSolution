@@ -1,8 +1,10 @@
 package com.whereisthesolution.whereisihesolutionapp.presentation.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -25,6 +27,9 @@ import whereisthesolution.app.shared.generated.resources.icon_visible
 @Preview(showBackground = true)
 @Composable
 fun CustomModalNavigationDrawer(
+    ownerImage: String = "image_link",
+    ownerName: String = "Matheus Bento Vieira",
+    ownerCity: String = "Juazeiro do Norte",
     drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
     content: @Composable (() -> Unit) = {}
 ) {
@@ -38,9 +43,18 @@ fun CustomModalNavigationDrawer(
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    // Foto
-                    // Nome
-                    // Email
+                    Image(
+                        painter = painterResource(Res.drawable.icon_visible),
+                        contentDescription = "owner_image"
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = ownerName
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = ownerCity
+                    )
                 }
 
                 HorizontalDivider()

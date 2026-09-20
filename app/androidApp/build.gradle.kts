@@ -12,6 +12,8 @@ kotlin {
 }
 dependencies {
     implementation(project(":app:shared"))
+    implementation(libs.androidx.datastore.core)
+    implementation(libs.androidx.datastore.preferences.core)
 
     implementation(libs.koin.android)
 

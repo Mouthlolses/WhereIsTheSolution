@@ -2,7 +2,7 @@ package com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.hom
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.whereisthesolution.whereisihesolutionapp.data.entity.UserEntity
+import com.whereisthesolution.whereisihesolutionapp.domain.model.user.User
 import com.whereisthesolution.whereisihesolutionapp.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -47,7 +47,7 @@ class HomeViewModel(
 
 
 data class HomeUiState(
-    val user: UserEntity? = null,
+    val user: User? = null,
     val loading: Boolean = false,
 )
 

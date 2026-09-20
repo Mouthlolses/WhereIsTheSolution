@@ -1,10 +1,18 @@
 package com.whereisthesolution.whereisihesolutionapp
 
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import com.whereisthesolution.whereisihesolutionapp.database.DatabaseFactory
+import com.whereisthesolution.whereisihesolutionapp.plugins.configureKoin
+import com.whereisthesolution.whereisihesolutionapp.plugins.configureSerialization
+import com.whereisthesolution.whereisihesolutionapp.routes.userRoutes
+import io.ktor.server.application.Application
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
+import org.koin.ktor.ext.get
+
+//Fluxo: POST /users -> UserRoutes -> UserService ->  UserRepository -> Database
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
@@ -12,9 +20,21 @@ fun main() {
 }
 
 fun Application.module() {
+
+    DatabaseFactory.init()
+
+    configureSerialization()
+    configureKoin()
+
+
     routing {
+
         get("/") {
-            call.respondText(sayHello("Ktor"))
+            call.respondText("Ktor")
         }
+
+        userRoutes(
+            userService = get()
+        )
     }
 }

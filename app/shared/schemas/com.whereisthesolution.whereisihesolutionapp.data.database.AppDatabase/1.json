@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "dd8162fd220e396f04267c2b4ae69263",
+    "identityHash": "b30e2841adf3e0e7d2b43a482baa2b94",
     "entities": [
       {
         "tableName": "users",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `email` TEXT NOT NULL, `password` TEXT NOT NULL, `cpfHash` TEXT, `avatarUrl` TEXT, `privacyLevel` TEXT, `reputationScore` INTEGER, `isVerified` INTEGER NOT NULL, `mainNeighborhood` TEXT, `city` TEXT, `createdAtTimestamp` INTEGER, `isActive` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `email` TEXT NOT NULL, `cpfHash` TEXT, `avatarUrl` TEXT, `privacyLevel` TEXT, `reputationScore` INTEGER, `isVerified` INTEGER NOT NULL, `mainNeighborhood` TEXT, `city` TEXT, `createdAtTimestamp` INTEGER NOT NULL, `isActive` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -23,12 +23,6 @@
           {
             "fieldPath": "email",
             "columnName": "email",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "password",
-            "columnName": "password",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -71,7 +65,8 @@
           {
             "fieldPath": "createdAtTimestamp",
             "columnName": "createdAtTimestamp",
-            "affinity": "INTEGER"
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "isActive",
@@ -192,7 +187,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'dd8162fd220e396f04267c2b4ae69263')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b30e2841adf3e0e7d2b43a482baa2b94')"
     ]
   }
 }

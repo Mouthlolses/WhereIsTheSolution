@@ -14,7 +14,6 @@ data class UserEntity(
 
     val name: String,
     val email: String,
-    val password: String,
     val cpfHash: String?,
     val avatarUrl: String?,
     val privacyLevel: String?,
@@ -22,7 +21,7 @@ data class UserEntity(
     val isVerified: Boolean,
     val mainNeighborhood: String?,
     val city: String?,
-    val createdAtTimestamp: Long?,
+    val createdAtTimestamp: Long,
     val isActive: Boolean
 )
 

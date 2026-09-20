@@ -6,7 +6,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.whereisthesolution.whereisihesolutionapp.data.entity.UserEntity
+import com.whereisthesolution.whereisihesolutionapp.network.dto.RegisterUserRequest
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.home.HomeScreen
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.home.HomeViewModel
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.login.LoginScreen
@@ -33,19 +33,10 @@ fun AppNavHost() {
                 onNavigationToHome = { navController.navigate("home") },
                 onRegisterUser = { name, city, email, password ->
                     viewmodel.registerUser(
-                        user = UserEntity(
+                        userRequest = RegisterUserRequest(
                             name = name,
                             email = email,
-                            password = password,
-                            cpfHash = null,
-                            avatarUrl = null,
-                            privacyLevel = null,
-                            reputationScore = null,
-                            isVerified = true,
-                            mainNeighborhood = null,
-                            city = city,
-                            createdAtTimestamp = null,
-                            isActive = true
+                            password = password
                         )
                     )
                 },

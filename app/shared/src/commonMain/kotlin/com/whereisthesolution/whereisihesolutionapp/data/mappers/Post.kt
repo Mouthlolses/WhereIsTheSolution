@@ -5,7 +5,7 @@ import com.whereisthesolution.whereisihesolutionapp.domain.model.post.Post
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.ReportCategory
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.ReportStatus
 import kotlinx.serialization.json.Json
-import java.time.Instant
+import kotlin.time.Instant
 
 // Converter de Entity (Room) -> Domain Model (Core)
 fun PostEntity.toDomainModel(): Post {
@@ -34,8 +34,7 @@ fun PostEntity.toDomainModel(): Post {
         latitude = latitude,
         longitude = longitude,
         address = address,
-        // Converte o Epoch Millis (Long) para Instant
-        createdAt = Instant.ofEpochMilli(createdAtTimestamp)
+        createdAt = Instant.fromEpochMilliseconds(createdAtTimestamp)
     )
 }
 
@@ -54,6 +53,6 @@ fun Post.toEntity(): PostEntity {
         longitude = longitude,
         address = address,
         // Converte o Instant para Epoch Millis (Long)
-        createdAtTimestamp = createdAt.toEpochMilli()
+        createdAtTimestamp = createdAt.toEpochMilliseconds()
     )
 }

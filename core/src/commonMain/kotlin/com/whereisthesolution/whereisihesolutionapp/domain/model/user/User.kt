@@ -2,13 +2,16 @@ package com.whereisthesolution.whereisihesolutionapp.domain.model.user
 
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.Post
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.PrivacyLevel
-import java.time.Instant
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
+import kotlin.time.Clock
+import kotlin.time.Instant
 
+@Serializable
 data class User(
     val id: Long,
     val name: String,
     val email: String,
-    val password: String,
     val cpfHash: String? = null,
     val avatarUrl: String? = null,
     val privacyLevel: PrivacyLevel? = PrivacyLevel.PUBLIC_TO_COMMUNITY,
@@ -20,6 +23,8 @@ data class User(
     // Lista de posts criados por este usuário
     val posts: List<Post> = emptyList(),
 
-    val createdAt: Instant = Instant.now(),
+    @Contextual
+    val createdAt: Instant = Clock.System.now(),
+
     val isActive: Boolean = true
 )

@@ -7,8 +7,8 @@ import org.koin.dsl.module
 // 1. Agrupe todos os módulos do Koin da sua aplicação
 val appModules = module {
     includes(
-        databaseModule
-        // viewModelModule
+        databaseModule,
+        networkModule
     )
 }
 

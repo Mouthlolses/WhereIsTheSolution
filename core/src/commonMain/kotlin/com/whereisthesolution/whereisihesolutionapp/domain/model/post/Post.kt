@@ -1,7 +1,11 @@
 package com.whereisthesolution.whereisihesolutionapp.domain.model.post
 
-import java.time.Instant
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
+import kotlin.time.Clock
+import kotlin.time.Instant
 
+@Serializable
 data class Post(
     val id: Long,
     val userId: String, // ID do autor (chave estrangeira)
@@ -13,16 +17,18 @@ data class Post(
     val longitude: Double,
     val address: String,
     val status: ReportStatus = ReportStatus.PENDING, // PENDING, SENT_TO_CITY_HALL, RESOLVED
-    val createdAt: Instant = Instant.now()
+
+    @Contextual
+    val createdAt: Instant = Clock.System.now()
 )
 
-
+@Serializable
 enum class PrivacyLevel {
     PUBLIC_TO_COMMUNITY,
     ANONYMOUS_TO_COMMUNITY,
     FULLY_ANONYMOUS
 }
-
+@Serializable
 enum class ReportCategory {
     BURACO_NA_VIA,
     ILUMINACAO_PUBLICA,
@@ -31,6 +37,7 @@ enum class ReportCategory {
     OUTROS
 }
 
+@Serializable
 enum class ReportStatus {
     PENDING,
     SENT_TO_CITY_HALL,
