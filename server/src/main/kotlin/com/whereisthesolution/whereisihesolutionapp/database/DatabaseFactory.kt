@@ -8,16 +8,24 @@ import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 object DatabaseFactory {
 
     fun init() {
-        var jdbcUrl = System.getenv("DATABASE_URL") ?: "jdbc:postgresql://localhost:5433/whereisthesolution"
+        // Lemos as credenciais das variáveis do Render ou usamos fallbacks locais
+        val envUrl = System.getenv("DATABASE_URL") ?: "jdbc:postgresql://aws-0-us-east-1.pooler.supabase.com:5432/postgres"
+        val user = System.getenv("DATABASE_USER") ?: "postgres.aaoebhheqzpdzavomyey"
+        val password = System.getenv("DATABASE_PASSWORD") ?: "mikeytoman1321"
 
-        // Força a URL a ter o prefixo jdbc: caso tenha vindo apenas como postgresql://
-        if (jdbcUrl.startsWith("postgresql://")) {
+        // Garante que a URL comece com jdbc:postgresql:// e limpa caso tenha usuário/senha embutidos
+        var jdbcUrl = envUrl
+        if (jdbcUrl.contains("@")) {
+            jdbcUrl = "jdbc:postgresql://" + jdbcUrl.substringAfter("@")
+        } else if (!jdbcUrl.startsWith("jdbc:")) {
             jdbcUrl = "jdbc:$jdbcUrl"
         }
 
         Database.connect(
             url = jdbcUrl,
-            driver = "org.postgresql.Driver"
+            driver = "org.postgresql.Driver",
+            user = user,
+            password = password
         )
 
         transaction {
