@@ -4,6 +4,7 @@ import com.whereisthesolution.whereisihesolutionapp.database.DatabaseFactory
 import com.whereisthesolution.whereisihesolutionapp.plugins.configureKoin
 import com.whereisthesolution.whereisihesolutionapp.plugins.configureSerialization
 import com.whereisthesolution.whereisihesolutionapp.routes.userRoutes
+import com.whereisthesolution.whereisihesolutionapp.security.configureSecurity
 import io.ktor.server.application.Application
 import io.ktor.server.auth.authenticate
 import io.ktor.server.engine.embeddedServer
@@ -25,6 +26,7 @@ fun Application.module() {
     DatabaseFactory.init()
 
     configureSerialization()
+    configureSecurity()
     configureKoin()
 
 
