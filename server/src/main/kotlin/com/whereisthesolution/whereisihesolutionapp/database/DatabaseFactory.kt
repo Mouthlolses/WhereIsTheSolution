@@ -8,11 +8,11 @@ import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 object DatabaseFactory {
 
     fun init() {
-        val host = System.getenv("DATABASE_HOST") ?: "aws-0-us-east-1.pooler.supabase.com"
-        val port = System.getenv("DATABASE_PORT") ?: "5432"
-        val dbName = System.getenv("DATABASE_NAME") ?: "postgres"
-        val user = System.getenv("DATABASE_USER") ?: "postgres.aaoebhheqzpdzavomyey"
-        val password = System.getenv("DATABASE_PASSWORD") ?: "mikeytoman1321"
+        val host = System.getenv("DATABASE_HOST")
+        val port = System.getenv("DATABASE_PORT")
+        val dbName = System.getenv("DATABASE_NAME")
+        val user = System.getenv("DATABASE_USER")
+        val password = System.getenv("DATABASE_PASSWORD")
 
         val jdbcUrl = "jdbc:postgresql://$host:$port/$dbName"
 

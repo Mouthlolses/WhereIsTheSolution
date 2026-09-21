@@ -11,6 +11,6 @@ val networkModule = module {
     }
 
     single {
-        UserApi(get())
+        UserApi(get(),)
     }
 }
