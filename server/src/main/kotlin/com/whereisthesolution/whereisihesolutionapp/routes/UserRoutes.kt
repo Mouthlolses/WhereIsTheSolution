@@ -58,6 +58,10 @@ fun Route.userRoutes(
                 password = request.password
             )
 
+            if (user == null) {
+                return@post call.respond(HttpStatusCode.Unauthorized)
+            }
+
             call.respond(
                 HttpStatusCode.OK,
                 user

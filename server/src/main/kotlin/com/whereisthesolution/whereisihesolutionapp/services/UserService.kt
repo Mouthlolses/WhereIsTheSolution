@@ -41,17 +41,23 @@ class UserService(
     suspend fun login(
         email: String,
         password: String
-    ): Boolean {
+    ): User? {
 
         val user = userRepository.findByEmail(email)
-            ?: return false
+            ?: return null
 
         val credential = userRepository.findCredentialByUserId(user.id)
-            ?: return false
+            ?: return null
 
-        return passwordHasher.verify(
+        val isValid = passwordHasher.verify(
             password = password,
             hash = credential.passwordHash
         )
+
+        if (!isValid) {
+            return null
+        }
+
+        return user
     }
 }
