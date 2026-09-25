@@ -1,6 +1,5 @@
 package com.whereisthesolution.whereisihesolutionapp.routes
 
-import com.whereisthesolution.whereisihesolutionapp.domain.model.user.User
 import com.whereisthesolution.whereisihesolutionapp.dto.CreateUserRequest
 import com.whereisthesolution.whereisihesolutionapp.dto.LoginRequest
 import com.whereisthesolution.whereisihesolutionapp.services.UserService
@@ -54,16 +53,15 @@ fun Route.userRoutes(
 
             val request = call.receive<LoginRequest>()
 
-            val isValid = userService.login(
+            val user = userService.login(
                 email = request.email,
                 password = request.password
             )
 
-            if (!isValid) {
-                return@post call.respond(HttpStatusCode.Unauthorized)
-            }
-
-            call.respond(HttpStatusCode.OK)
+            call.respond(
+                HttpStatusCode.OK,
+                user
+            )
         }
 
 
