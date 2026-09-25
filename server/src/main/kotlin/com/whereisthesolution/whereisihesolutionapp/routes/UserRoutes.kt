@@ -50,7 +50,8 @@ fun Route.userRoutes(
         }
 
         // fazer login
-        post("/login") {
+        post("/auth/login") {
+
             val request = call.receive<LoginRequest>()
 
             val isValid = userService.login(
