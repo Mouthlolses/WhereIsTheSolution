@@ -8,7 +8,7 @@ import ai.koog.prompt.executor.llms.MultiLLMPromptExecutor
 
 object AiAgent {
 
-    private val aiAgentKey = ""
+    private val aiAgentKey = "AQ.Ab8RN6KA-O6S-vCABde_T1yzBlZE3Mq9uSlQOUJLv-zpqUEu3g"
         ?: error("GOOGLE_API_KEY não encontrada")
 
     private val tools = AiAgentTools()

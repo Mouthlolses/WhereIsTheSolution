@@ -7,7 +7,6 @@ import com.whereisthesolution.whereisihesolutionapp.plugins.configureSerializati
 import com.whereisthesolution.whereisihesolutionapp.routes.userRoutes
 import com.whereisthesolution.whereisihesolutionapp.security.configureSecurity
 import io.ktor.server.application.Application
-import io.ktor.server.auth.authenticate
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.response.respondText
@@ -31,19 +30,16 @@ fun Application.module() {
     configureKoin()
     configureJwt()
 
-
     routing {
 
         get("/") {
             call.respondText("Ktor")
         }
 
-        authenticate("api-key-auth") {
-            userRoutes(
-                userService = get(),
-                postService = get(),
-                jwtService = get()
-            )
-        }
+        userRoutes(
+            userService = get(),
+            postService = get(),
+            jwtService = get()
+        )
     }
 }
