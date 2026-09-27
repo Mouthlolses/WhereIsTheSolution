@@ -15,11 +15,11 @@ fun PostEntity.toDomainModel(): Post {
         title = title,
         description = description,
         // Converte a String JSON de volta para List<String>
-        imageUrls = try {
-            Json.decodeFromString<List<String>>(imageUrlsJson)
-        } catch (e: Exception) {
-            emptyList()
-        },
+//        imageUrls = try {
+//            Json.decodeFromString<List<String>>(imageUrlsJson)
+//        } catch (e: Exception) {
+//            emptyList()
+//        },
         // Converte as Strings salvas no banco para os Enums de Domínio
         category = try {
             ReportCategory.valueOf(category)
@@ -46,7 +46,7 @@ fun Post.toEntity(): PostEntity {
         title = title,
         description = description,
         // Serializa a List<String> para uma String JSON
-        imageUrlsJson = Json.encodeToString(imageUrls),
+        imageUrlsJson = Json.encodeToString(""),
         category = category.name,
         status = status.name,
         latitude = latitude,

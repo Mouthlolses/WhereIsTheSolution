@@ -30,6 +30,7 @@ fun CustomModalNavigationDrawer(
     ownerImage: String = "image_link",
     ownerName: String = "Matheus Bento Vieira",
     ownerCity: String = "Juazeiro do Norte",
+    logout: () -> Unit = {},
     drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
     content: @Composable (() -> Unit) = {}
 ) {
@@ -98,7 +99,7 @@ fun CustomModalNavigationDrawer(
                     label = { Text("Sair") },
                     selected = false,
                     onClick = {
-                        // logout
+                        logout()
                     }
                 )
             }

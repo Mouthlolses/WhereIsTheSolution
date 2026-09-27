@@ -8,18 +8,26 @@ import kotlin.time.Instant
 @Serializable
 data class Post(
     val id: Long,
-    val userId: String, // ID do autor (chave estrangeira)
+    val userId: Long,
     val title: String,
     val description: String,
-    val imageUrls: List<String>,
-    val category: ReportCategory, // Ex: BURACO_NA_VIA, ILUMINACAO, LIXO_IRREGULAR
+    val category: ReportCategory,
     val latitude: Double,
     val longitude: Double,
     val address: String,
-    val status: ReportStatus = ReportStatus.PENDING, // PENDING, SENT_TO_CITY_HALL, RESOLVED
+    val status: ReportStatus = ReportStatus.PENDING,
+    val privacyLevel: PrivacyLevel = PrivacyLevel.PUBLIC_TO_COMMUNITY,
 
     @Contextual
     val createdAt: Instant = Clock.System.now()
+)
+
+@Serializable
+data class PostImage(
+    val id: Long,
+    val postId: Long,
+    val imageUrl: String,
+    val position: Int
 )
 
 @Serializable
@@ -28,6 +36,7 @@ enum class PrivacyLevel {
     ANONYMOUS_TO_COMMUNITY,
     FULLY_ANONYMOUS
 }
+
 @Serializable
 enum class ReportCategory {
     BURACO_NA_VIA,

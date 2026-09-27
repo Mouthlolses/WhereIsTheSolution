@@ -25,20 +25,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.login.LoginUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomUserBottomSheet(
     onDismissRequest: () -> Unit,
-    onSubmit: (name: String, city: String, email: String, password: String) -> Unit
+    isLoading: Boolean,
+    onSubmit: () -> Unit,
+    uiState: LoginUiState,
+    name: (name: String) -> Unit,
+    email: (email: String) -> Unit,
+    password: (password: String) -> Unit,
 ) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
     var passwordConfirm by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
 
     val cities = remember { listOf("Juazeiro do Norte", "Crato", "Barbalha") }
     var selectedCity by remember { mutableStateOf(cities.first()) }
@@ -61,8 +63,8 @@ fun CustomUserBottomSheet(
             )
 
             OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
+                value = uiState.name,
+                onValueChange = { name(it) },
                 label = { Text("Nome Completo") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -108,8 +110,8 @@ fun CustomUserBottomSheet(
             }
 
             OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = uiState.email,
+                onValueChange = { email(it) },
                 label = { Text("E-mail") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -118,8 +120,8 @@ fun CustomUserBottomSheet(
             )
 
             OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
+                value = uiState.password,
+                onValueChange = { password(it) },
                 label = { Text("Senha") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -139,15 +141,14 @@ fun CustomUserBottomSheet(
 
             Button(
                 onClick = {
-                    if (password == passwordConfirm) {
-                        isLoading = true
-                        onSubmit(name, selectedCity, email, password)
+                    if (uiState.password == passwordConfirm) {
+                        onSubmit()
                     }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-                enabled = name.isNotBlank() && email.isNotBlank() && !isLoading
+                enabled = uiState.name.isNotBlank() && uiState.email.isNotBlank() && !isLoading
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(

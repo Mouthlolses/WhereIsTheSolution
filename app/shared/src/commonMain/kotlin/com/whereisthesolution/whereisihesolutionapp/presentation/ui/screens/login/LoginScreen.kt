@@ -21,6 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -58,14 +59,14 @@ import whereisthesolution.app.shared.generated.resources.icon_visible
 fun LoginScreen(
     onLoginClick: () -> Unit,
     onNavigationToHome: () -> Unit,
-    uiEvent: Flow<LoginUiEvent>,
-    onRegisterUser: (name: String, city: String, email: String, password: String) -> Unit = { name, city, email, password ->
-
-    },
+    uiEvent: Flow<LoginUiEvent> = flowOf(),
+    uiState: LoginUiState,
+    name: (name: String) -> Unit,
+    email: (email: String) -> Unit,
+    password: (password: String) -> Unit,
+    onRegisterUser: () -> Unit = {},
     onForgotPasswordClick: () -> Unit = {}
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var showCreateUserSheet by remember { mutableStateOf(false) }
 
@@ -106,9 +107,14 @@ fun LoginScreen(
             ) {
                 CustomUserBottomSheet(
                     onDismissRequest = { showCreateUserSheet = false },
-                    onSubmit = { name, city, email, password ->
-                        onRegisterUser(name, city, email, password)
-                    }
+                    onSubmit = {
+                        onRegisterUser()
+                    },
+                    isLoading = uiState.loading,
+                    uiState = uiState,
+                    name = name,
+                    email = email,
+                    password = password,
                 )
             }
         }
@@ -198,8 +204,10 @@ fun LoginScreen(
 
                         // Email
                         OutlinedTextField(
-                            value = email,
-                            onValueChange = { email = it },
+                            value = uiState.email,
+                            onValueChange = {
+                                email(it)
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true,
                             label = {
@@ -214,8 +222,10 @@ fun LoginScreen(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         OutlinedTextField(
-                            value = password,
-                            onValueChange = { password = it },
+                            value = uiState.password,
+                            onValueChange = {
+                                password(it)
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true,
                             label = {
@@ -272,7 +282,9 @@ fun LoginScreen(
 
                         // Botão entrar
                         Button(
-                            onClick = onLoginClick,
+                            onClick = {
+                                onLoginClick()
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(52.dp),
@@ -281,12 +293,19 @@ fun LoginScreen(
                                 containerColor = Color(0xFF1769AA)
                             )
                         ) {
-                            Text(
-                                text = "Entrar",
-                                style = MaterialTheme.typography.labelLarge.copy(
-                                    fontWeight = FontWeight.Bold
+                            if (uiState.loading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(24.dp),
+                                    color = MaterialTheme.colorScheme.onPrimary
                                 )
-                            )
+                            } else {
+                                Text(
+                                    text = "Entrar",
+                                    style = MaterialTheme.typography.labelLarge.copy(
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                )
+                            }
                         }
 
                         Spacer(modifier = Modifier.height(22.dp))
@@ -358,12 +377,18 @@ fun LoginScreen(
 @Composable
 fun LoginScreenPreview() {
     LoginScreen(
-        onLoginClick = {},
-        onRegisterUser = { name, city, email, password ->
+        onLoginClick = {
+
+        },
+        onRegisterUser = {
 
         },
         onForgotPasswordClick = {},
         onNavigationToHome = {},
-        uiEvent = flowOf()
+        uiEvent = flowOf(),
+        uiState = TODO(),
+        name = TODO(),
+        email = TODO(),
+        password = TODO()
     )
 }

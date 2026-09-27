@@ -20,7 +20,7 @@ import androidx.room.PrimaryKey
 )
 data class PostEntity(
     @PrimaryKey val id: Long,
-    val userId: String, // Chave Estrangeira (Foreign Key)
+    val userId: Long, // Chave Estrangeira (Foreign Key)
     val title: String,
     val description: String,
     val imageUrlsJson: String, // Ex: convertido para JSON string via TypeConverter

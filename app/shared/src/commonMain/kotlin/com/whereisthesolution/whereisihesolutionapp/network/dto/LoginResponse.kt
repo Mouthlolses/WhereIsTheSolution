@@ -2,9 +2,8 @@ package com.whereisthesolution.whereisihesolutionapp.network.dto
 
 import kotlinx.serialization.Serializable
 
-
 @Serializable
-data class AuthUserRequest(
-    val email: String,
-    val password: String
+data class LoginResponse(
+    val token: String,
+    val user: UserResponse
 )

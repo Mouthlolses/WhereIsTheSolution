@@ -5,6 +5,7 @@ import com.whereisthesolution.whereisihesolutionapp.data.mappers.toDomain
 import com.whereisthesolution.whereisihesolutionapp.data.mappers.toEntity
 import com.whereisthesolution.whereisihesolutionapp.domain.model.user.User
 import com.whereisthesolution.whereisihesolutionapp.network.api.UserApi
+import com.whereisthesolution.whereisihesolutionapp.network.dto.AuthUserRequest
 import com.whereisthesolution.whereisihesolutionapp.network.dto.RegisterUserRequest
 import com.whereisthesolution.whereisihesolutionapp.session.SessionManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,7 +17,11 @@ import kotlinx.coroutines.flow.map
 interface UserRepository {
 
     suspend fun registerUser(request: RegisterUserRequest): Result<User>
+
+    suspend fun authenticateUser(request: AuthUserRequest): Result<User>
     fun observeLoggedUser(): Flow<User?>
+
+    suspend fun logout()
 
 }
 
@@ -31,30 +36,44 @@ class UserRepositoryImpl(
         request: RegisterUserRequest
     ): Result<User> {
         return try {
-            println("REGISTER 1: chamando API")
 
             val response = userApi.registerUser(request)
 
-            println("REGISTER 2: API respondeu")
-
             val user = response.toDomain()
 
-            println("REGISTER 3: convertido para User")
-
             userDao.insertUser(user.toEntity())
-
-            println("REGISTER 4: salvo no Room")
-
-            sessionManager.login(user.id)
-
-            println("REGISTER 5: sessão salva")
 
             Result.success(user)
 
         } catch (e: Exception) {
+
             println("REGISTER ERRO: ${e::class.simpleName}")
             println("REGISTER MENSAGEM: ${e.message}")
+
             Result.failure(e)
+        }
+    }
+
+    override suspend fun authenticateUser(request: AuthUserRequest): Result<User> {
+        return try {
+            val response = userApi.authenticateUser(request)
+
+            val user = response.user
+
+            sessionManager.login(
+                userId = user.id,
+                token = response.token
+            )
+
+            userDao.insertUser(user.toEntity())
+
+            Result.success(user)
+
+        } catch (e: Exception) {
+            println("LOGIN ERRO: ${e::class.simpleName}")
+            println("LOGIN MENSAGEM: ${e.message}")
+            Result.failure(e)
+
         }
     }
 
@@ -69,5 +88,9 @@ class UserRepositoryImpl(
                         .map { it?.toDomain() }
                 }
             }
+    }
+
+    override suspend fun logout() {
+        sessionManager.logout()
     }
 }

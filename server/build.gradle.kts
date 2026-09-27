@@ -28,6 +28,12 @@ dependencies {
     implementation(libs.koin.ktor)
     implementation(libs.koin.logger.slf4j)
 
+    implementation(libs.koog.agents)
+    implementation(libs.koog.agents.additions)
+
+    implementation("io.ktor:ktor-server-auth-jwt:3.5.2")
+    implementation("com.auth0:java-jwt:4.5.0")
+
     implementation(libs.logback)
     implementation(libs.ktor.serverCore)
     implementation(libs.ktor.serverNetty)
