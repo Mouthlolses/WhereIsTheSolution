@@ -1,7 +1,6 @@
 package com.whereisthesolution.whereisihesolutionapp
 
 import com.whereisthesolution.whereisihesolutionapp.database.DatabaseFactory
-import com.whereisthesolution.whereisihesolutionapp.plugins.configureJwt
 import com.whereisthesolution.whereisihesolutionapp.plugins.configureKoin
 import com.whereisthesolution.whereisihesolutionapp.plugins.configureSerialization
 import com.whereisthesolution.whereisihesolutionapp.routes.userRoutes
@@ -28,7 +27,6 @@ fun Application.module() {
     configureSerialization()
     configureSecurity()
     configureKoin()
-    configureJwt()
 
     routing {
 
