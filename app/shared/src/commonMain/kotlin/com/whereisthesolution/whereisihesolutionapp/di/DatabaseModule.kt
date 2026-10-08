@@ -11,6 +11,7 @@ import com.whereisthesolution.whereisihesolutionapp.repository.UserRepository
 import com.whereisthesolution.whereisihesolutionapp.repository.UserRepositoryImpl
 import com.whereisthesolution.whereisihesolutionapp.session.SessionManager
 import com.whereisthesolution.whereisihesolutionapp.utils.createDataStore
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 
@@ -43,13 +44,13 @@ val databaseModule = module {
         )
     }
 
-    single {
+    viewModel {
         LoginViewModel(
             repository = get()
         )
     }
 
-    single {
+    viewModel {
         HomeViewModel(
             repository = get()
         )

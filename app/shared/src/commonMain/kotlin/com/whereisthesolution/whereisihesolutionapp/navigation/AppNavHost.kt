@@ -12,6 +12,7 @@ import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.home
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.home.HomeViewModel
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.login.LoginScreen
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.login.LoginViewModel
+import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.registerOccurrence.RegisterOccurrenceScreen
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -60,6 +61,7 @@ fun AppNavHost() {
                 name = viewmodel::onNameChanged,
                 email = viewmodel::onEmailChanged,
                 password = viewmodel::onPasswordChanged,
+                confirmPassword = viewmodel::onPasswordConfirmChanged
             )
         }
         composable(route = "home") {
@@ -79,8 +81,15 @@ fun AppNavHost() {
                             launchSingleTop = true
                         }
                 },
+                onNavigationToRegisterPost = {
+                    navController
+                        .navigate("register-post")
+                },
                 logout = viewmodel::logout
             )
+        }
+        composable(route = "register-post") {
+            RegisterOccurrenceScreen()
         }
     }
 }

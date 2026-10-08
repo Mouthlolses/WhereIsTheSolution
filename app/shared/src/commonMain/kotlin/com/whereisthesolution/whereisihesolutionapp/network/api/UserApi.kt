@@ -23,7 +23,7 @@ class UserApi(
     ): UserResponse {
 
         val response = client
-            .post("${NetworkConfig.BASE_URL}/users") {
+            .post("${NetworkConfig.BASE_URL}/users/register") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }

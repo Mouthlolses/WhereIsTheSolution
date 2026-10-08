@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.whereisthesolution.whereisihesolutionapp.network.dto.AuthUserRequest
 import com.whereisthesolution.whereisihesolutionapp.network.dto.RegisterUserRequest
 import com.whereisthesolution.whereisihesolutionapp.repository.UserRepository
+import com.whereisthesolution.whereisihesolutionapp.utils.isValidEmail
+import com.whereisthesolution.whereisihesolutionapp.utils.validateFields
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,12 +28,11 @@ class LoginViewModel(
     fun onNameChanged(name: String) {
         _uiState.update {
             it.copy(
-                email = name,
+                name = name,
                 nameError = null
             )
         }
     }
-
 
     fun onEmailChanged(email: String) {
         _uiState.update {
@@ -51,15 +52,55 @@ class LoginViewModel(
         }
     }
 
+    fun onPasswordConfirmChanged(passwordConfirm: String) {
+        _uiState.update {
+            it.copy(
+                passwordConfirm = passwordConfirm,
+                passwordConfirmRegisterError = null
+            )
+        }
+    }
+
 
     fun registerUser(userRequest: RegisterUserRequest) {
+
+        if (_uiState.value.name.isEmpty()) {
+            _uiState.update { it.copy(nameRegisterError = "O nome é obrigatório") }
+            return
+        }
+
+        if (_uiState.value.email.isEmpty()) {
+            _uiState.update { it.copy(emailRegisterError = "O email é obrigatório") }
+            return
+        }
+
+        if (_uiState.value.password.isEmpty()) {
+            _uiState.update { it.copy(passwordRegisterError = "A senha é obrigatória") }
+            return
+        }
+
+        if (_uiState.value.password != _uiState.value.passwordConfirm) {
+            _uiState.update {
+                it.copy(
+                    passwordRegisterError = "As senhas não coincidem",
+                    passwordConfirmRegisterError = "As senhas não coincidem"
+                )
+            }
+            return
+        }
+
+        if (!isValidEmail(_uiState.value.email)) {
+            _uiState.update { it.copy(emailRegisterError = "O email é inválido") }
+            return
+        }
+
+
         viewModelScope.launch {
             _uiState.update { it.copy(loading = true) }
             try {
                 repository.registerUser(userRequest)
                     .onSuccess {
                         _uiState.update { it.copy(loading = false) }
-                        _uiEvent.send(LoginUiEvent.NavigateToHome)
                     }
                     .onFailure { e ->
                         _uiState.update { it.copy(loading = false) }
@@ -79,14 +120,13 @@ class LoginViewModel(
     }
 
     fun loginUser(userRequest: AuthUserRequest) {
-        val state = _uiState.value
 
         val request = AuthUserRequest(
-            email = state.email,
-            password = state.password
+            email = _uiState.value.email,
+            password = _uiState.value.password
         )
 
-        if (!validateFields(request)) return
+        if (!validateFields(request, _uiState)) return
 
 
         viewModelScope.launch {
@@ -115,42 +155,6 @@ class LoginViewModel(
 
     }
 
-    private fun isValidEmail(email: String): Boolean {
-        return email.matches(
-            Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")
-        )
-    }
-
-    private fun validateFields(request: AuthUserRequest): Boolean {
-        val emailError = when {
-            request.email.isBlank() ->
-                "E-mail is required"
-
-            !isValidEmail(request.email) ->
-                "Invalid e-mail"
-
-            else -> null
-        }
-
-        val passwordError = when {
-            request.password.isBlank() ->
-                "Password is required"
-
-            request.password.length < 6 ->
-                "Password must contain at least 6 characters"
-
-            else -> null
-        }
-
-        _uiState.update {
-            it.copy(
-                emailError = emailError,
-                passwordError = passwordError
-            )
-        }
-
-        return emailError == null && passwordError == null
-    }
 }
 
 
@@ -159,9 +163,16 @@ data class LoginUiState(
     val name: String = "",
     val email: String = "",
     val password: String = "",
+    val passwordConfirm: String = "",
+
     val nameError: String? = null,
     val emailError: String? = null,
-    val passwordError: String? = null
+    val passwordError: String? = null,
+
+    val nameRegisterError: String? = null,
+    val emailRegisterError: String? = null,
+    val passwordRegisterError: String? = null,
+    val passwordConfirmRegisterError: String? = null
 )
 
 

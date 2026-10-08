@@ -6,13 +6,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -24,8 +28,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.login.LoginUiState
+import org.jetbrains.compose.resources.painterResource
+import whereisthesolution.app.shared.generated.resources.Res
+import whereisthesolution.app.shared.generated.resources.icon_invisible
+import whereisthesolution.app.shared.generated.resources.icon_visible
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,10 +47,12 @@ fun CustomUserBottomSheet(
     name: (name: String) -> Unit,
     email: (email: String) -> Unit,
     password: (password: String) -> Unit,
+    confirmPassword: (confirmPassword: String) -> Unit
 ) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var passwordConfirm by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
+    var passwordConfirmVisible by remember { mutableStateOf(false) }
 
     val cities = remember { listOf("Juazeiro do Norte", "Crato", "Barbalha") }
     var selectedCity by remember { mutableStateOf(cities.first()) }
@@ -53,9 +65,10 @@ fun CustomUserBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp)
                 .padding(bottom = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
                 text = "Novo Cadastro",
@@ -68,6 +81,12 @@ fun CustomUserBottomSheet(
                 label = { Text("Nome Completo") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                isError = uiState.nameRegisterError != null,
+                supportingText = {
+                    uiState.nameRegisterError?.let { error ->
+                        Text(text = error)
+                    }
+                },
                 shape = RoundedCornerShape(16.dp)
 
             )
@@ -115,6 +134,12 @@ fun CustomUserBottomSheet(
                 label = { Text("E-mail") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                isError = uiState.emailRegisterError != null,
+                supportingText = {
+                    uiState.emailRegisterError?.let { error ->
+                        Text(text = error)
+                    }
+                },
                 shape = RoundedCornerShape(16.dp)
 
             )
@@ -125,25 +150,90 @@ fun CustomUserBottomSheet(
                 label = { Text("Senha") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(16.dp),
+                trailingIcon = {
+                    IconButton(
+                        onClick = {
+                            passwordVisible = !passwordVisible
+                        }
+                    ) {
+                        Icon(
+                            painter = if (passwordVisible) {
+                                painterResource(Res.drawable.icon_invisible)
+                            } else {
+                                painterResource(Res.drawable.icon_visible)
+                            },
+                            contentDescription =
+                                if (passwordVisible)
+                                    "Ocultar senha"
+                                else
+                                    "Mostrar senha",
+                            modifier = Modifier
+                                .size(16.dp)
+                        )
+                    }
+                },
+                isError = uiState.passwordRegisterError != null,
+                supportingText = {
+                    uiState.passwordRegisterError?.let { error ->
+                        Text(text = error)
+                    }
+                },
+                visualTransformation =
+                    if (passwordVisible) {
+                        VisualTransformation.None
+                    } else {
+                        PasswordVisualTransformation()
+                    },
 
-            )
+                )
 
             OutlinedTextField(
-                value = passwordConfirm,
-                onValueChange = { passwordConfirm = it },
+                value = uiState.passwordConfirm,
+                onValueChange = { confirmPassword(it) },
                 label = { Text("Confirme sua senha") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                shape = RoundedCornerShape(16.dp)
-
+                shape = RoundedCornerShape(16.dp),
+                trailingIcon = {
+                    IconButton(
+                        onClick = {
+                            passwordConfirmVisible = !passwordConfirmVisible
+                        }
+                    ) {
+                        Icon(
+                            painter = if (passwordConfirmVisible) {
+                                painterResource(Res.drawable.icon_invisible)
+                            } else {
+                                painterResource(Res.drawable.icon_visible)
+                            },
+                            contentDescription =
+                                if (passwordConfirmVisible)
+                                    "Ocultar senha"
+                                else
+                                    "Mostrar senha",
+                            modifier = Modifier
+                                .size(16.dp)
+                        )
+                    }
+                },
+                isError = uiState.passwordConfirmRegisterError != null,
+                supportingText = {
+                    uiState.passwordConfirmRegisterError?.let { error ->
+                        Text(text = error)
+                    }
+                },
+                visualTransformation =
+                    if (passwordConfirmVisible) {
+                        VisualTransformation.None
+                    } else {
+                        PasswordVisualTransformation()
+                    },
             )
 
             Button(
                 onClick = {
-                    if (uiState.password == passwordConfirm) {
-                        onSubmit()
-                    }
+                    onSubmit()
                 },
                 modifier = Modifier
                     .fillMaxWidth()

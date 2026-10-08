@@ -64,13 +64,23 @@ fun LoginScreen(
     name: (name: String) -> Unit,
     email: (email: String) -> Unit,
     password: (password: String) -> Unit,
+    confirmPassword: (confirmPassword: String) -> Unit,
     onRegisterUser: () -> Unit = {},
     onForgotPasswordClick: () -> Unit = {}
 ) {
-    var passwordVisible by remember { mutableStateOf(false) }
-    var showCreateUserSheet by remember { mutableStateOf(false) }
+    var passwordVisible by remember {
+        mutableStateOf(false)
+    }
 
-    val snackBarState = remember { SnackbarHostState() }
+    var showCreateUserSheet by remember {
+        mutableStateOf(false)
+    }
+
+
+    val snackBarState = remember {
+        SnackbarHostState()
+    }
+
 
     LaunchedEffect(Unit) {
         uiEvent.collect { event ->
@@ -81,7 +91,7 @@ fun LoginScreen(
                 }
 
                 is LoginUiEvent.ShowError -> {
-                    snackBarState.showSnackbar("Error")
+                    event.message?.let { snackBarState.showSnackbar(it) }
                 }
             }
         }
@@ -115,6 +125,7 @@ fun LoginScreen(
                     name = name,
                     email = email,
                     password = password,
+                    confirmPassword = confirmPassword
                 )
             }
         }
@@ -125,7 +136,6 @@ fun LoginScreen(
                 .padding(paddingValues)
         ) {
 
-            // Decoração superior
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -149,7 +159,6 @@ fun LoginScreen(
 
                 Spacer(modifier = Modifier.height(82.dp))
 
-
                 Text(
                     text = "Voz Cidadã",
                     style = MaterialTheme.typography.headlineMedium.copy(
@@ -166,7 +175,6 @@ fun LoginScreen(
 
                 Spacer(modifier = Modifier.height(55.dp))
 
-                // Card principal
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(28.dp),
@@ -202,7 +210,6 @@ fun LoginScreen(
 
                         Spacer(modifier = Modifier.height(26.dp))
 
-                        // Email
                         OutlinedTextField(
                             value = uiState.email,
                             onValueChange = {
@@ -216,10 +223,16 @@ fun LoginScreen(
                             placeholder = {
                                 Text("seu@email.com")
                             },
+                            isError = uiState.emailError != null,
+                            supportingText = {
+                                uiState.emailError?.let { error ->
+                                    Text(text = error)
+                                }
+                            },
                             shape = RoundedCornerShape(16.dp)
                         )
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
 
                         OutlinedTextField(
                             value = uiState.password,
@@ -230,6 +243,12 @@ fun LoginScreen(
                             singleLine = true,
                             label = {
                                 Text("Senha")
+                            },
+                            isError = uiState.passwordError != null,
+                            supportingText = {
+                                uiState.passwordError?.let { error ->
+                                    Text(text = error)
+                                }
                             },
                             trailingIcon = {
                                 IconButton(
@@ -262,9 +281,6 @@ fun LoginScreen(
                             shape = RoundedCornerShape(16.dp)
                         )
 
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        // Esqueci minha senha
                         Text(
                             text = "Esqueci minha senha",
                             modifier = Modifier
@@ -280,7 +296,6 @@ fun LoginScreen(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        // Botão entrar
                         Button(
                             onClick = {
                                 onLoginClick()
@@ -310,7 +325,6 @@ fun LoginScreen(
 
                         Spacer(modifier = Modifier.height(22.dp))
 
-                        // Divisor
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
@@ -389,6 +403,7 @@ fun LoginScreenPreview() {
         uiState = TODO(),
         name = TODO(),
         email = TODO(),
-        password = TODO()
+        password = TODO(),
+        confirmPassword = TODO()
     )
 }

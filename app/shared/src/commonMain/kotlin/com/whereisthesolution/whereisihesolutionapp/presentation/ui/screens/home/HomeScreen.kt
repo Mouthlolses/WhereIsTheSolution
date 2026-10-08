@@ -27,6 +27,7 @@ fun HomeScreen(
     uiState: HomeUiState = HomeUiState(),
     uiEvent: Flow<HomeUiEvent> = flowOf(),
     onNavigationToLogin: () -> Unit = {},
+    onNavigationToRegisterPost: () -> Unit = {},
     logout: () -> Unit = {},
 ) {
 
@@ -62,7 +63,9 @@ fun HomeScreen(
         CustomModalNavigationDrawer(
             ownerName = user?.name ?: "",
             drawerState = drawerState,
-            logout = { logout() }
+            logout = {
+                logout()
+            }
         ) {
             Scaffold(
                 topBar = {
