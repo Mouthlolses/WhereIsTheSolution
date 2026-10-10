@@ -28,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -229,7 +230,11 @@ fun LoginScreen(
                                     Text(text = error)
                                 }
                             },
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(16.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedLabelColor = Color(0xFF1769AA),
+                                focusedBorderColor = Color(0xFF1769AA)
+                            )
                         )
 
                         Spacer(modifier = Modifier.height(12.dp))
@@ -278,21 +283,30 @@ fun LoginScreen(
                                 } else {
                                     PasswordVisualTransformation()
                                 },
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(16.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedLabelColor = Color(0xFF1769AA),
+                                focusedBorderColor = Color(0xFF1769AA)
+                            )
                         )
 
-                        Text(
-                            text = "Esqueci minha senha",
+                        Row(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    onForgotPasswordClick()
-                                },
-                            textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.labelLarge,
-                            color = Color(0xFF1769AA),
-                            fontWeight = FontWeight.SemiBold
-                        )
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Text(
+                                text = "Esqueci minha senha",
+                                modifier = Modifier
+                                    .clickable {
+                                        onForgotPasswordClick()
+                                    },
+                                textAlign = TextAlign.End,
+                                style = MaterialTheme.typography.labelLarge,
+                                color = Color(0xFF1769AA),
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
 
                         Spacer(modifier = Modifier.height(24.dp))
 

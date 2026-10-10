@@ -10,16 +10,19 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -28,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -75,6 +79,8 @@ fun CustomUserBottomSheet(
                 style = MaterialTheme.typography.headlineSmall
             )
 
+            HorizontalDivider(modifier = Modifier.fillMaxWidth())
+
             OutlinedTextField(
                 value = uiState.name,
                 onValueChange = { name(it) },
@@ -87,8 +93,11 @@ fun CustomUserBottomSheet(
                         Text(text = error)
                     }
                 },
-                shape = RoundedCornerShape(16.dp)
-
+                shape = RoundedCornerShape(16.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedLabelColor = Color(0xFF1769AA),
+                    focusedBorderColor = Color(0xFF1769AA)
+                )
             )
 
             ExposedDropdownMenuBox(
@@ -103,13 +112,17 @@ fun CustomUserBottomSheet(
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCityMenuExpanded)
                     },
-                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(
+                        focusedLabelColor = Color(0xFF1769AA),
+                        focusedBorderColor = Color(0xFF1769AA)
+                    ),
                     modifier = Modifier
                         .menuAnchor() // Vincula o dropdown ao campo
                         .fillMaxWidth(),
                     singleLine = true,
-                    shape = RoundedCornerShape(16.dp)
-                )
+                    shape = RoundedCornerShape(16.dp),
+
+                    )
 
                 ExposedDropdownMenu(
                     expanded = isCityMenuExpanded,
@@ -135,12 +148,19 @@ fun CustomUserBottomSheet(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 isError = uiState.emailRegisterError != null,
+                placeholder = {
+                    Text("seu@email.com")
+                },
                 supportingText = {
                     uiState.emailRegisterError?.let { error ->
                         Text(text = error)
                     }
                 },
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(16.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedLabelColor = Color(0xFF1769AA),
+                    focusedBorderColor = Color(0xFF1769AA)
+                )
 
             )
 
@@ -185,8 +205,11 @@ fun CustomUserBottomSheet(
                     } else {
                         PasswordVisualTransformation()
                     },
-
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedLabelColor = Color(0xFF1769AA),
+                    focusedBorderColor = Color(0xFF1769AA)
                 )
+            )
 
             OutlinedTextField(
                 value = uiState.passwordConfirm,
@@ -229,6 +252,10 @@ fun CustomUserBottomSheet(
                     } else {
                         PasswordVisualTransformation()
                     },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedLabelColor = Color(0xFF1769AA),
+                    focusedBorderColor = Color(0xFF1769AA)
+                )
             )
 
             Button(
@@ -238,7 +265,14 @@ fun CustomUserBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-                enabled = uiState.name.isNotBlank() && uiState.email.isNotBlank() && !isLoading
+                enabled = uiState.name.isNotBlank() &&
+                        uiState.email.isNotBlank() &&
+                        uiState.password.isNotBlank() &&
+                        uiState.passwordConfirm.isNotBlank()
+                        && !isLoading,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF1769AA)
+                )
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(
