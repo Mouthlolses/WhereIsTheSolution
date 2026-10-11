@@ -161,7 +161,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(82.dp))
 
                 Text(
-                    text = "Voz Cidadã",
+                    text = "Tá Errado!",
                     style = MaterialTheme.typography.headlineMedium.copy(
                         fontWeight = FontWeight.Bold,
                         color = Color.White
