@@ -104,28 +104,42 @@ fun Route.userRoutes(
 
                 val request = call.receive<CreatePostRequest>()
 
-                val savedPost = postService.save(
-                    post = Post(
-                        id = 0,
-                        userId = userId,
-                        title = request.title,
-                        description = request.description,
-                        category = request.category,
-                        latitude = request.latitude,
-                        longitude = request.longitude,
-                        address = request.address,
-                        privacyLevel = request.privacyLevel
-                    ),
-                    imageUrls = request.imageUrls
-                )
+                if (request.imageUrls.isEmpty()) {
+                    return@post call
+                        .respond(
+                            HttpStatusCode.BadRequest,
+                            "A ocorrência precisa ter pelo menos uma imagem."
+                        )
+                }
 
+                try {
+                    val savedPost = postService.save(
+                        post = Post(
+                            id = 0,
+                            userId = userId,
+                            title = request.title,
+                            description = request.description,
+                            category = request.category,
+                            latitude = request.latitude,
+                            longitude = request.longitude,
+                            address = request.address,
+                            privacyLevel = request.privacyLevel
+                        ),
+                        imageUrls = request.imageUrls
+                    )
 
-                call.respond(
-                    HttpStatusCode.Created,
-                    savedPost
-                )
+                    call.respond(HttpStatusCode.Created, savedPost)
+
+                } catch (e: IllegalArgumentException) {
+                    call.respond(HttpStatusCode.BadRequest, e.message ?: "Dados inválidos")
+                } catch (e: Exception) {
+                    call.respond(
+                        HttpStatusCode.InternalServerError,
+                        e.message ?: "Erro ao criar a ocorrência"
+                    )
+                }
+
             }
-
         }
     }
 }
