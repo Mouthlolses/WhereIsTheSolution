@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -31,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -39,10 +42,12 @@ import androidx.compose.ui.unit.dp
 import com.whereisthesolution.whereisihesolutionapp.config.decodeImage
 import com.whereisthesolution.whereisihesolutionapp.config.media.ImageResult
 import com.whereisthesolution.whereisihesolutionapp.config.rememberPlatformMediaPicker
+import com.whereisthesolution.whereisihesolutionapp.font.interFontFamily
 import org.jetbrains.compose.resources.painterResource
 import whereisthesolution.app.shared.generated.resources.Res
-import whereisthesolution.app.shared.generated.resources.compose_multiplatform
-import whereisthesolution.app.shared.generated.resources.icon_visible
+import whereisthesolution.app.shared.generated.resources.add_location_icon
+import whereisthesolution.app.shared.generated.resources.arrow_back
+import whereisthesolution.app.shared.generated.resources.image_placeholder_take_photo
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -78,7 +83,8 @@ fun RegisterOccurrenceScreen(
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
-                            text = "Nova Ocorrência"
+                            text = "Nova Ocorrência",
+                            fontFamily = interFontFamily(),
                         )
                     },
                     navigationIcon = {
@@ -88,7 +94,7 @@ fun RegisterOccurrenceScreen(
                             },
                         ) {
                             Icon(
-                                painter = painterResource(Res.drawable.compose_multiplatform),
+                                painter = painterResource(Res.drawable.arrow_back),
                                 contentDescription = "return",
                                 modifier = Modifier
                                     .size(16.dp)
@@ -110,7 +116,7 @@ fun RegisterOccurrenceScreen(
                         onClick = { },
                         shapes = ButtonDefaults.shapes(
                             shape = RoundedCornerShape(12.dp),
-                            pressedShape = RoundedCornerShape(16.dp)
+                            pressedShape = RoundedCornerShape(12.dp)
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -120,7 +126,7 @@ fun RegisterOccurrenceScreen(
                             containerColor = Color(0xFF1769AA)
                         )
                     ) {
-                        Text("Compartilhar")
+                        Text("Compartilhar", fontFamily = interFontFamily())
                     }
                     Spacer(modifier = Modifier.height(56.dp))
                 }
@@ -134,40 +140,51 @@ fun RegisterOccurrenceScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Nova publicação",
-                style = MaterialTheme.typography.headlineSmall
-            )
-
-            Button(
-                onClick = { picker.launchCamera() },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(
-                    painter = painterResource(Res.drawable.icon_visible),
-                    contentDescription = null
-                )
-                Spacer(Modifier.width(8.dp))
-                Text("Tirar foto")
-            }
 
             // Preview da foto depois da captura
-            selectedImage?.let { image ->
-                val bitmap = remember(image) {
-                    decodeImage(image.bytes)
-                }
+            Card(
+                onClick = { picker.launchCamera() },
+                modifier = Modifier
+                    .size(300.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.Gray
+                )
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (selectedImage == null) {
+                        Image(
+                            painter = painterResource(Res.drawable.image_placeholder_take_photo),
+                            contentDescription = "place_holder_take_photo",
+                            modifier = Modifier
+                                .size(300.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        selectedImage?.let { image ->
+                            val bitmap = remember(image) {
+                                decodeImage(image.bytes)
+                            }
 
-                bitmap?.let {
-                    Image(
-                        bitmap = it,
-                        contentDescription = "Preview da publicação",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f),
-                        contentScale = ContentScale.Crop
-                    )
+                            bitmap?.let {
+                                Image(
+                                    bitmap = it,
+                                    contentDescription = "Preview da publicação",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .aspectRatio(1f),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
@@ -175,20 +192,25 @@ fun RegisterOccurrenceScreen(
                 value = description,
                 onValueChange = { description = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Escreva uma legenda...") },
+                label = { Text("Escreva uma legenda...", fontFamily = interFontFamily()) },
                 minLines = 3
             )
 
             OutlinedButton(
                 onClick = onAddLocation,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.icon_visible),
-                    contentDescription = null
+                    painter = painterResource(Res.drawable.add_location_icon),
+                    contentDescription = "add_location",
+                    modifier = Modifier
+                        .size(16.dp)
                 )
                 Spacer(Modifier.width(8.dp))
-                Text(locationName ?: "Adicionar localização")
+                Text(
+                    text = locationName ?: "Adicionar localização",
+                    fontFamily = interFontFamily()
+                )
             }
         }
     }

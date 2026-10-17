@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,11 +27,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.whereisthesolution.whereisihesolutionapp.font.interFontFamily
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import whereisthesolution.app.shared.generated.resources.Res
 import whereisthesolution.app.shared.generated.resources.icon_invisible
+import whereisthesolution.app.shared.generated.resources.icon_share
 import whereisthesolution.app.shared.generated.resources.icon_visible
+import whereisthesolution.app.shared.generated.resources.person_pessoal_icon
 
 @Preview(showBackground = true)
 @Composable
@@ -84,8 +88,10 @@ fun MockPostage(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.icon_visible),
+                    painter = painterResource(Res.drawable.person_pessoal_icon),
                     contentDescription = "Avatar",
+                    modifier = Modifier
+                        .size(18.dp),
                     tint = Color.DarkGray
                 )
             }
@@ -97,23 +103,31 @@ fun MockPostage(
             ) {
                 Text(
                     text = userOwnerName,
+                    fontFamily = interFontFamily(),
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp
                 )
 
                 Text(
                     text = userOwnerCity,
+                    fontFamily = interFontFamily(),
                     fontSize = 12.sp,
                     color = Color.Gray
                 )
             }
 
             IconButton(
-                onClick = { }
+                onClick = { },
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = Color.LightGray
+                )
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.icon_visible),
-                    contentDescription = "Mais opções"
+                    painter = painterResource(Res.drawable.icon_share),
+                    contentDescription = "Mais opções",
+                    modifier = Modifier
+                        .size(18.dp),
+                    tint = Color.DarkGray
                 )
             }
         }
@@ -185,6 +199,7 @@ fun MockPostage(
         Text(
             text = "1.248 curtidas",
             modifier = Modifier.padding(horizontal = 16.dp),
+            fontFamily = interFontFamily(),
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp
         )
@@ -200,12 +215,14 @@ fun MockPostage(
         ) {
             Text(
                 text = userOwnerName,
+                fontFamily = interFontFamily(),
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp
             )
 
             Text(
                 text = " Curtindo o Cariri! 🌴🔥",
+                fontFamily = interFontFamily(),
                 fontSize = 14.sp
             )
         }
@@ -218,6 +235,7 @@ fun MockPostage(
                 vertical = 4.dp
             ),
             color = Color.Gray,
+            fontFamily = interFontFamily(),
             fontSize = 13.sp
         )
 
@@ -237,6 +255,58 @@ val postList = listOf(
         ),
         comments = listOf(
             "Gostei disso"
+        )
+    ),
+    Post(
+        id = 2,
+        userOwner = "Maria",
+        userOwnerCity = "Crato, CE",
+        image = Res.drawable.icon_invisible,
+        iconsInteraction = listOf(
+            "Like", "Comment"
+        ),
+        comments = listOf(
+            "Gostei disso",
+            "Gostei Daquilo"
+        )
+    ),
+    Post(
+        id = 2,
+        userOwner = "Maria",
+        userOwnerCity = "Crato, CE",
+        image = Res.drawable.icon_invisible,
+        iconsInteraction = listOf(
+            "Like", "Comment"
+        ),
+        comments = listOf(
+            "Gostei disso",
+            "Gostei Daquilo"
+        )
+    ),
+    Post(
+        id = 2,
+        userOwner = "Maria",
+        userOwnerCity = "Crato, CE",
+        image = Res.drawable.icon_invisible,
+        iconsInteraction = listOf(
+            "Like", "Comment"
+        ),
+        comments = listOf(
+            "Gostei disso",
+            "Gostei Daquilo"
+        )
+    ),
+    Post(
+        id = 2,
+        userOwner = "Maria",
+        userOwnerCity = "Crato, CE",
+        image = Res.drawable.icon_invisible,
+        iconsInteraction = listOf(
+            "Like", "Comment"
+        ),
+        comments = listOf(
+            "Gostei disso",
+            "Gostei Daquilo"
         )
     ),
     Post(
