@@ -20,7 +20,8 @@ import whereisthesolution.app.shared.generated.resources.icon_visible
 @Composable
 fun CustomTopAppBar(
     modifier: Modifier = Modifier,
-    openUserModal: () -> Unit = {}
+    openUserModal: () -> Unit = {},
+    openRegisterPost: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -44,12 +45,18 @@ fun CustomTopAppBar(
             }
         },
         actions = {
-            Image(
-                painter = painterResource(Res.drawable.icon_invisible),
-                contentDescription = "icon_plus_create_post",
-                modifier = Modifier.size(16.dp),
-                contentScale = ContentScale.Crop
-            )
+            IconButton(
+                onClick = {
+                    openRegisterPost()
+                }
+            ) {
+                Image(
+                    painter = painterResource(Res.drawable.icon_invisible),
+                    contentDescription = "icon_plus_create_post",
+                    modifier = Modifier.size(16.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
     )
 }

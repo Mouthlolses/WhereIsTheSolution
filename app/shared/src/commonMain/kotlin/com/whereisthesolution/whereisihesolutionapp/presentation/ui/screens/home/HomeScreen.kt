@@ -17,7 +17,6 @@ import com.whereisthesolution.whereisihesolutionapp.presentation.ui.components.C
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.components.CustomTopAppBar
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.components.FeedCity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
@@ -74,6 +73,9 @@ fun HomeScreen(
                             scope.launch {
                                 drawerState.open()
                             }
+                        },
+                        openRegisterPost = {
+                            onNavigationToRegisterPost()
                         }
                     )
                 },

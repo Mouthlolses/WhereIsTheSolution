@@ -82,14 +82,17 @@ fun AppNavHost() {
                         }
                 },
                 onNavigationToRegisterPost = {
-                    navController
-                        .navigate("register-post")
+                    navController.navigate("register-post")
                 },
                 logout = viewmodel::logout
             )
         }
         composable(route = "register-post") {
-            RegisterOccurrenceScreen()
+            RegisterOccurrenceScreen(
+                onBackScreen = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }
