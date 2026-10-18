@@ -126,7 +126,7 @@ fun MockPostage(
                     painter = painterResource(Res.drawable.icon_share),
                     contentDescription = "Mais opções",
                     modifier = Modifier
-                        .size(18.dp),
+                        .size(22.dp),
                     tint = Color.DarkGray
                 )
             }

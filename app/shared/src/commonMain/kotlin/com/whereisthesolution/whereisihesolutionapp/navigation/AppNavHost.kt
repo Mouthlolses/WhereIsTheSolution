@@ -6,11 +6,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.whereisthesolution.whereisihesolutionapp.network.dto.AuthUserRequest
-import com.whereisthesolution.whereisihesolutionapp.network.dto.RegisterUserRequest
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.home.HomeScreen
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.home.HomeViewModel
-import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.login.LoginScreen
+import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.login.LoginScreenContainer
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.login.LoginViewModel
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.registerOccurrence.RegisterOccurrenceScreen
 import org.koin.compose.viewmodel.koinViewModel
@@ -29,39 +27,10 @@ fun AppNavHost() {
             val viewmodel: LoginViewModel = koinViewModel()
             val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
 
-            LoginScreen(
-                onLoginClick = {
-                    viewmodel.loginUser(
-                        userRequest = AuthUserRequest(
-                            uiState.email,
-                            uiState.password
-                        )
-                    )
-                },
-                onNavigationToHome = {
-                    navController
-                        .navigate("home") {
-                            popUpTo("login") {
-                                inclusive = true
-                            }
-                            launchSingleTop = true
-                        }
-                },
-                onRegisterUser = {
-                    viewmodel.registerUser(
-                        userRequest = RegisterUserRequest(
-                            name = uiState.name,
-                            email = uiState.email,
-                            password = uiState.password
-                        )
-                    )
-                },
-                uiEvent = viewmodel.uiEvent,
+            LoginScreenContainer(
+                viewmodel = viewmodel,
                 uiState = uiState,
-                name = viewmodel::onNameChanged,
-                email = viewmodel::onEmailChanged,
-                password = viewmodel::onPasswordChanged,
-                confirmPassword = viewmodel::onPasswordConfirmChanged
+                navController = navController
             )
         }
         composable(route = "home") {

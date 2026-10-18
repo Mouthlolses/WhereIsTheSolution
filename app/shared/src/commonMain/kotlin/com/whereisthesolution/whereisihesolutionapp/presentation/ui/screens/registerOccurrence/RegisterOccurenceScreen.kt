@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,7 +23,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -106,7 +106,9 @@ fun RegisterOccurrenceScreen(
         },
         bottomBar = {
             Surface(
-                shadowElevation = 18.dp
+                shadowElevation = 18.dp,
+                modifier = Modifier
+                    .navigationBarsPadding()
             ) {
                 Row(
                     Modifier.fillMaxWidth(),
@@ -190,10 +192,25 @@ fun RegisterOccurrenceScreen(
 
             OutlinedTextField(
                 value = description,
-                onValueChange = { description = it },
+                onValueChange = {
+                    if (it.length <= 200) {
+                        description = it
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Escreva uma legenda...", fontFamily = interFontFamily()) },
-                minLines = 3
+                supportingText = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Text(
+                            text = "${description.length}/200"
+                        )
+                    }
+                },
+                minLines = 1,
+                maxLines = 2
             )
 
             OutlinedButton(

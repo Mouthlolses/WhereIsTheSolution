@@ -42,22 +42,51 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.whereisthesolution.whereisihesolutionapp.font.interFontFamily
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.components.CustomUserBottomSheet
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import org.jetbrains.compose.resources.painterResource
-import whereisthesolution.app.shared.generated.resources.Inter_Regular
 import whereisthesolution.app.shared.generated.resources.Res
 import whereisthesolution.app.shared.generated.resources.icon_invisible
 import whereisthesolution.app.shared.generated.resources.icon_visible
+
+
+@Composable
+fun LoginScreenContainer(
+    viewmodel: LoginViewModel,
+    uiState: LoginUiState,
+    navController: NavHostController
+
+) {
+    LoginScreen(
+        onLoginClick = viewmodel::loginUser,
+        onNavigationToHome = {
+            navController
+                .navigate("home") {
+                    popUpTo("login") {
+                        inclusive = true
+                    }
+                    launchSingleTop = true
+                }
+        },
+        uiEvent = viewmodel.uiEvent,
+        uiState = uiState,
+        name = viewmodel::onNameChanged,
+        email = viewmodel::onEmailChanged,
+        password = viewmodel::onPasswordChanged,
+        confirmPassword = viewmodel::onPasswordConfirmChanged,
+        onRegisterUser = viewmodel::registerUser,
+    )
+}
+
 
 @Composable
 fun LoginScreen(
@@ -226,6 +255,7 @@ fun LoginScreen(
                             },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true,
+
                             label = {
                                 Text("E-mail")
                             },

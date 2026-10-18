@@ -62,14 +62,19 @@ class LoginViewModel(
     }
 
 
-    fun registerUser(userRequest: RegisterUserRequest) {
+    fun registerUser() {
 
-        if (_uiState.value.name.isEmpty()) {
+        val state = _uiState.value
+
+        val name = state.name.trim()
+        val email = state.email.trim()
+
+        if (name.isEmpty()) {
             _uiState.update { it.copy(nameRegisterError = "O nome é obrigatório") }
             return
         }
 
-        if (_uiState.value.email.isEmpty()) {
+        if (email.isEmpty()) {
             _uiState.update { it.copy(emailRegisterError = "O email é obrigatório") }
             return
         }
@@ -94,11 +99,16 @@ class LoginViewModel(
             return
         }
 
+        val request = RegisterUserRequest(
+            name = name,
+            email = email,
+            password = state.password
+        )
 
         viewModelScope.launch {
             _uiState.update { it.copy(loading = true) }
             try {
-                repository.registerUser(userRequest)
+                repository.registerUser(request)
                     .onSuccess {
                         _uiState.update { it.copy(loading = false) }
                     }
@@ -119,11 +129,16 @@ class LoginViewModel(
         }
     }
 
-    fun loginUser(userRequest: AuthUserRequest) {
+    fun loginUser() {
+
+        val state = _uiState.value
+
+        val email = state.email.trim()
+        val password = state.password
 
         val request = AuthUserRequest(
-            email = _uiState.value.email,
-            password = _uiState.value.password
+            email = email,
+            password = password
         )
 
         if (!validateFields(request, _uiState)) return
@@ -132,7 +147,7 @@ class LoginViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(loading = true) }
             try {
-                repository.authenticateUser(userRequest)
+                repository.authenticateUser(request)
                     .onSuccess {
                         _uiState.update { it.copy(loading = false) }
                         _uiEvent.send(LoginUiEvent.NavigateToHome)
