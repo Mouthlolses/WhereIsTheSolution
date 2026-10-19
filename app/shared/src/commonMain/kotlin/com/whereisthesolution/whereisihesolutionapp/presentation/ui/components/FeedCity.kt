@@ -14,45 +14,51 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.SubcomposeAsyncImage
+import com.whereisthesolution.whereisihesolutionapp.animated.OfflineAnimation
 import com.whereisthesolution.whereisihesolutionapp.font.interFontFamily
-import org.jetbrains.compose.resources.DrawableResource
+import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.home.HomeUiState
 import org.jetbrains.compose.resources.painterResource
 import whereisthesolution.app.shared.generated.resources.Res
-import whereisthesolution.app.shared.generated.resources.icon_invisible
+import whereisthesolution.app.shared.generated.resources.assignment_now
+import whereisthesolution.app.shared.generated.resources.icon_favorite
 import whereisthesolution.app.shared.generated.resources.icon_share
-import whereisthesolution.app.shared.generated.resources.icon_visible
+import whereisthesolution.app.shared.generated.resources.like_icon
+import whereisthesolution.app.shared.generated.resources.location_city_icon
 import whereisthesolution.app.shared.generated.resources.person_pessoal_icon
 
 @Preview(showBackground = true)
 @Composable
 fun FeedCity(
     modifier: Modifier = Modifier,
-    userOwnerName: String = "João",
-    userOwnerCity: String = "Crato",
+    uiState: HomeUiState = HomeUiState(),
     commentsLength: Int = 1
-
 ) {
     LazyColumn(
         modifier = modifier
     ) {
-        items(postList) {
+        items(uiState.posts) { postList ->
             MockPostage(
-                userOwnerName = userOwnerName,
-                userOwnerCity = userOwnerCity,
-                commentsLength = commentsLength
+                userOwnerName = uiState.user?.name ?: "",
+                userOwnerCity = uiState.user?.city ?: "",
+                imageUrl = postList?.imageUrlsJson ?: "",
+                commentsLength = commentsLength,
             )
         }
     }
@@ -63,6 +69,7 @@ fun FeedCity(
 fun MockPostage(
     userOwnerName: String,
     userOwnerCity: String,
+    imageUrl: String,
     commentsLength: Int
 ) {
     Column(
@@ -71,7 +78,6 @@ fun MockPostage(
             .background(Color.White)
     ) {
 
-        // Header do post
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -79,7 +85,6 @@ fun MockPostage(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            // Avatar
             Box(
                 modifier = Modifier
                     .size(42.dp)
@@ -119,36 +124,43 @@ fun MockPostage(
             IconButton(
                 onClick = { },
                 colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = Color.LightGray
+                    containerColor = Color.Transparent
                 )
             ) {
                 Icon(
                     painter = painterResource(Res.drawable.icon_share),
                     contentDescription = "Mais opções",
-                    modifier = Modifier
-                        .size(22.dp),
-                    tint = Color.DarkGray
+                    modifier = Modifier.size(22.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
 
-        // Imagem do post
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
-                .background(Color.LightGray),
+                .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                painter = painterResource(Res.drawable.icon_visible),
-                contentDescription = "Imagem do post",
-                modifier = Modifier.size(48.dp),
-                tint = Color.Gray
-            )
+            if (imageUrl.isNotEmpty()) {
+                SubcomposeAsyncImage(
+                    model = imageUrl,
+                    contentDescription = "post_image",
+                    contentScale = ContentScale.Crop,
+                    loading = {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            strokeWidth = 2.dp
+                        )
+                    },
+                    error = {
+                        OfflineAnimation()
+                    }
+                )
+            }
         }
 
-        // Ações
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -160,8 +172,10 @@ fun MockPostage(
                 onClick = { }
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.icon_visible),
-                    contentDescription = "Curtir"
+                    painter = painterResource(Res.drawable.like_icon),
+                    contentDescription = "Curtir",
+                    modifier = Modifier.size(22.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -169,8 +183,10 @@ fun MockPostage(
                 onClick = { }
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.icon_visible),
-                    contentDescription = "Comentar"
+                    painter = painterResource(Res.drawable.icon_favorite),
+                    contentDescription = "Favoritar",
+                    modifier = Modifier.size(22.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -178,10 +194,14 @@ fun MockPostage(
                 onClick = { }
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.icon_visible),
-                    contentDescription = "Compartilhar"
+                    painter = painterResource(Res.drawable.location_city_icon),
+                    contentDescription = "Ver no mapa",
+                    modifier = Modifier.size(22.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
+
+
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -189,8 +209,10 @@ fun MockPostage(
                 onClick = { }
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.icon_visible),
-                    contentDescription = "Salvar"
+                    painter = painterResource(Res.drawable.assignment_now),
+                    contentDescription = "Salvar",
+                    modifier = Modifier.size(22.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -229,7 +251,7 @@ fun MockPostage(
 
         // Comentários
         Text(
-            text = "Ver todos os ${commentsLength} comentários",
+            text = "Ver todos os $commentsLength comentários",
             modifier = Modifier.padding(
                 horizontal = 16.dp,
                 vertical = 4.dp
@@ -242,93 +264,3 @@ fun MockPostage(
         Spacer(modifier = Modifier.height(8.dp))
     }
 }
-
-
-val postList = listOf(
-    Post(
-        id = 1,
-        userOwner = "Carlos",
-        userOwnerCity = "Juazeiro do Norte, CE",
-        image = Res.drawable.icon_visible,
-        iconsInteraction = listOf(
-            "Like", "Comment"
-        ),
-        comments = listOf(
-            "Gostei disso"
-        )
-    ),
-    Post(
-        id = 2,
-        userOwner = "Maria",
-        userOwnerCity = "Crato, CE",
-        image = Res.drawable.icon_invisible,
-        iconsInteraction = listOf(
-            "Like", "Comment"
-        ),
-        comments = listOf(
-            "Gostei disso",
-            "Gostei Daquilo"
-        )
-    ),
-    Post(
-        id = 2,
-        userOwner = "Maria",
-        userOwnerCity = "Crato, CE",
-        image = Res.drawable.icon_invisible,
-        iconsInteraction = listOf(
-            "Like", "Comment"
-        ),
-        comments = listOf(
-            "Gostei disso",
-            "Gostei Daquilo"
-        )
-    ),
-    Post(
-        id = 2,
-        userOwner = "Maria",
-        userOwnerCity = "Crato, CE",
-        image = Res.drawable.icon_invisible,
-        iconsInteraction = listOf(
-            "Like", "Comment"
-        ),
-        comments = listOf(
-            "Gostei disso",
-            "Gostei Daquilo"
-        )
-    ),
-    Post(
-        id = 2,
-        userOwner = "Maria",
-        userOwnerCity = "Crato, CE",
-        image = Res.drawable.icon_invisible,
-        iconsInteraction = listOf(
-            "Like", "Comment"
-        ),
-        comments = listOf(
-            "Gostei disso",
-            "Gostei Daquilo"
-        )
-    ),
-    Post(
-        id = 2,
-        userOwner = "Maria",
-        userOwnerCity = "Crato, CE",
-        image = Res.drawable.icon_invisible,
-        iconsInteraction = listOf(
-            "Like", "Comment"
-        ),
-        comments = listOf(
-            "Gostei disso",
-            "Gostei Daquilo"
-        )
-    )
-)
-
-data class Post(
-    val id: Long,
-    val userOwner: String,
-    val userOwnerCity: String,
-    val image: DrawableResource,
-    val iconsInteraction: List<String>,
-    val comments: List<String>
-)

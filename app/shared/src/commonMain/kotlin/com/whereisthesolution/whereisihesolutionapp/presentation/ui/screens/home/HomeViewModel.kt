@@ -2,11 +2,14 @@ package com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.hom
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.whereisthesolution.whereisihesolutionapp.data.entity.PostEntity
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.PostResponse
 import com.whereisthesolution.whereisihesolutionapp.domain.model.user.User
 import com.whereisthesolution.whereisihesolutionapp.repository.UserRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -27,6 +30,7 @@ class HomeViewModel(
 
     init {
         observeUser()
+        observePosts()
     }
 
     private fun observeUser() {
@@ -43,6 +47,37 @@ class HomeViewModel(
                         user = user,
                         loading = false
                     )
+                }
+            }
+            .catch {
+                _uiState.update {
+                    it.copy(loading = false)
+                }
+            }
+            .launchIn(
+                viewModelScope
+            )
+    }
+
+    private fun observePosts(){
+        repository
+            .observePosts()
+            .onStart {
+                _uiState.update {
+                    it.copy(loading = true)
+                }
+            }
+            .onEach { postEntities ->
+                _uiState.update {
+                    it.copy(
+                        posts = postEntities,
+                        loading = false
+                    )
+                }
+            }
+            .catch {
+                _uiState.update {
+                    it.copy(loading = false)
                 }
             }
             .launchIn(
@@ -69,6 +104,7 @@ class HomeViewModel(
 
 data class HomeUiState(
     val user: User? = null,
+    val posts: List<PostEntity?> = listOf(),
     val loading: Boolean = false,
 )
 

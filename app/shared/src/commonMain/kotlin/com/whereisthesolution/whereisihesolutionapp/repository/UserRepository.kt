@@ -1,6 +1,7 @@
 package com.whereisthesolution.whereisihesolutionapp.repository
 
 import com.whereisthesolution.whereisihesolutionapp.data.dao.UserDao
+import com.whereisthesolution.whereisihesolutionapp.data.entity.PostEntity
 import com.whereisthesolution.whereisihesolutionapp.data.mappers.toDomain
 import com.whereisthesolution.whereisihesolutionapp.data.mappers.toEntity
 import com.whereisthesolution.whereisihesolutionapp.domain.model.user.User
@@ -20,6 +21,10 @@ interface UserRepository {
 
     suspend fun authenticateUser(request: AuthUserRequest): Result<User>
     fun observeLoggedUser(): Flow<User?>
+
+    suspend fun savePost(page: Int, pageSize: Int)
+
+    fun observePosts(): Flow<List<PostEntity>>
 
     suspend fun logout()
 
@@ -88,6 +93,24 @@ class UserRepositoryImpl(
                         .map { it?.toDomain() }
                 }
             }
+    }
+
+    override suspend fun savePost(
+        page: Int,
+        pageSize: Int
+    ) {
+        val posts = userApi.getAllPosts(page, pageSize)
+
+        val entities = posts.map { post ->
+            post.toEntity()
+        }
+
+        userDao.insertPosts(entities)
+
+    }
+
+    override fun observePosts(): Flow<List<PostEntity>> {
+        return userDao.observeAllPosts()
     }
 
     override suspend fun logout() {

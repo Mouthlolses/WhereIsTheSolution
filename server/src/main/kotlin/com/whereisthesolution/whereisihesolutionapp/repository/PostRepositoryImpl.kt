@@ -2,7 +2,10 @@ package com.whereisthesolution.whereisihesolutionapp.repository
 
 import com.whereisthesolution.whereisihesolutionapp.database.tables.PostImagesTable
 import com.whereisthesolution.whereisihesolutionapp.database.tables.PostsTable
+import com.whereisthesolution.whereisihesolutionapp.database.tables.UsersTable
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.FeedPostResponse
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.Post
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.PostAuthorResponse
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.PostResponse
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.PrivacyLevel
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.ReportCategory
@@ -61,7 +64,15 @@ class PostRepositoryImpl : PostRepository {
     override suspend fun getFeed(
         page: Int,
         pageSize: Int
-    ): List<PostResponse> {
+    ): List<FeedPostResponse> {
+
+        require(page >= 1) {
+            "Page must be greater than or equal to 1"
+        }
+
+        require(pageSize in 1..100) {
+            "Page size must be between 1 and 100"
+        }
 
         val offset = page * pageSize
 
@@ -86,6 +97,24 @@ class PostRepositoryImpl : PostRepository {
                 it[PostsTable.id]
             }
 
+            val userIds = posts
+                .map { it[PostsTable.userId] }
+                .distinct()
+
+            val users = UsersTable
+                .selectAll()
+                .where {
+                    UsersTable.id inList userIds
+                }
+                .associate { row ->
+                    val userId = row[UsersTable.id]
+
+                    userId to PostAuthorResponse(
+                        id = userId,
+                        name = row[UsersTable.name]
+                    )
+                }
+
             val images = PostImagesTable
                 .selectAll()
                 .where {
@@ -101,13 +130,16 @@ class PostRepositoryImpl : PostRepository {
             posts.map { row ->
 
                 val postId = row[PostsTable.id]
+                val userId = row[PostsTable.userId]
 
-                row.toPostResponse(
+                val post = row.toPostResponse(
                     imageUrls = images[postId]
-                        ?.map {
-                            it[PostImagesTable.imageUrl]
-                        }
+                        ?.map { it[PostImagesTable.imageUrl] }
                         ?: emptyList()
+                )
+                FeedPostResponse(
+                    post = post,
+                    author = users[userId]
                 )
             }
         }

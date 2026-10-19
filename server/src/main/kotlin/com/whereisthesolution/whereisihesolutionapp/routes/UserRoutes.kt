@@ -140,6 +140,33 @@ fun Route.userRoutes(
                 }
 
             }
+
+            get("/get/allposts") {
+
+                val page = call.request.queryParameters["page"]
+                    ?.toIntOrNull()
+                    ?: 1
+
+                val pageSize = call.request.queryParameters["pageSize"]
+                    ?.toIntOrNull()
+                    ?: 20
+
+                try {
+                    val posts = postService.getPosts(
+                        page = page,
+                        pageSize = pageSize
+                    )
+
+                    call.respond(HttpStatusCode.OK, posts)
+
+                } catch (e: IllegalArgumentException) {
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        mapOf("error" to (e.message ?: "Parametros inválidos"))
+                    )
+                }
+
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.whereisthesolution.whereisihesolutionapp.data.entity.PostEntity
 import com.whereisthesolution.whereisihesolutionapp.data.entity.UserEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -31,5 +32,11 @@ interface UserDao {
     @Query("DELETE FROM users WHERE id = :userId")
     suspend fun deleteUserById(userId: String)
 
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPosts(post: List<PostEntity>)
+
+    @Query("SELECT * FROM posts")
+    fun observeAllPosts(): Flow<List<PostEntity>>
 
 }

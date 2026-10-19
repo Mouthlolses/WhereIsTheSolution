@@ -2,10 +2,12 @@ package com.whereisthesolution.whereisihesolutionapp.data.mappers
 
 import com.whereisthesolution.whereisihesolutionapp.data.entity.PostEntity
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.Post
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.PostResponse
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.ReportCategory
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.ReportStatus
 import kotlinx.serialization.json.Json
 import kotlin.time.Instant
+
 
 // Converter de Entity (Room) -> Domain Model (Core)
 fun PostEntity.toDomainModel(): Post {
@@ -53,6 +55,22 @@ fun Post.toEntity(): PostEntity {
         longitude = longitude,
         address = address,
         // Converte o Instant para Epoch Millis (Long)
+        createdAtTimestamp = createdAt.toEpochMilliseconds()
+    )
+}
+
+fun PostResponse.toEntity(): PostEntity {
+    return PostEntity(
+        id = id,
+        userId = userId,
+        title = title,
+        description = description,
+        imageUrlsJson = Json.encodeToString(imageUrls),
+        category = category.name,
+        latitude = latitude,
+        longitude = longitude,
+        address = address,
+        status = status.name,
         createdAtTimestamp = createdAt.toEpochMilliseconds()
     )
 }

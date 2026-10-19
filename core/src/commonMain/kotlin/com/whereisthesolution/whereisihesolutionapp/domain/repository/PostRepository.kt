@@ -1,5 +1,6 @@
 package com.whereisthesolution.whereisihesolutionapp.domain.repository
 
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.FeedPostResponse
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.Post
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.PostResponse
 
@@ -14,7 +15,7 @@ interface PostRepository {
     suspend fun getFeed(
         page: Int,
         pageSize: Int
-    ): List<PostResponse>
+    ): List<FeedPostResponse>
 
     suspend fun getPostsByUser(
         userId: Long,

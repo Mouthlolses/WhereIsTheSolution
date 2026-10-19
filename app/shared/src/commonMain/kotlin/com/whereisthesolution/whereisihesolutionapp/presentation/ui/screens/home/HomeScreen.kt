@@ -70,8 +70,14 @@ fun HomeScreen(
                 topBar = {
                     CustomTopAppBar(
                         openUserModal = {
-                            scope.launch {
-                                drawerState.open()
+                            try {
+                                println("Abrindo drawer")
+                                scope.launch {
+                                    drawerState.open()
+                                    println("Drawer aberto")
+                                }
+                            } catch (e: Exception) {
+                                println("Erro ao abrir drawer: ${e.stackTraceToString()}")
                             }
                         },
                         openRegisterPost = {
@@ -88,9 +94,7 @@ fun HomeScreen(
                 FeedCity(
                     modifier = Modifier
                         .padding(paddingValues),
-                    userOwnerName = user?.name ?: "",
-                    userOwnerCity = user?.city ?: "",
-                    commentsLength = 1
+                    uiState = uiState
                 )
             }
         }

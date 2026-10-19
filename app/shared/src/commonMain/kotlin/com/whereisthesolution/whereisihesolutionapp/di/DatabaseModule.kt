@@ -32,9 +32,7 @@ val databaseModule = module {
     single { get<UserApi>() }
 
 
-    single { SessionManager(
-        get()
-    ) }
+    single { SessionManager(get()) }
 
     single<UserRepository> {
         UserRepositoryImpl(

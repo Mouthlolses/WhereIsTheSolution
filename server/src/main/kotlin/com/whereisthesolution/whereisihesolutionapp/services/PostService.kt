@@ -1,5 +1,6 @@
 package com.whereisthesolution.whereisihesolutionapp.services
 
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.FeedPostResponse
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.Post
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.PostResponse
 import com.whereisthesolution.whereisihesolutionapp.domain.repository.PostRepository
@@ -22,10 +23,10 @@ class PostService(
         return savedPost.toResponse(imageUrls)
     }
 
-    suspend fun getFeed(
+    suspend fun getPosts(
         page: Int,
         pageSize: Int
-    ): List<PostResponse> {
+    ): List<FeedPostResponse> {
         return postRepository.getFeed(
             page = page,
             pageSize = pageSize

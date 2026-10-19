@@ -1,38 +1,43 @@
 [versions]
-agp = "9.0.1"
-android-compileSdk = "36"
+agp = "9.4.0"
+android-compileSdk = "37"
 android-minSdk = "29"
 android-targetSdk = "36"
 androidx-activity = "1.13.0"
 androidx-appcompat = "1.8.0"
-androidx-core = "1.19.0"
+androidx-core = "1.19.1"
 androidx-espresso = "3.7.0"
-androidx-lifecycle = "2.11.0-beta01"
+androidx-lifecycle = "2.11.0"
 androidx-testExt = "1.3.0"
-composeMultiplatform = "1.11.1"
+coilCompose = "3.6.3"
+composeMultiplatform = "1.12.2"
+compottie = "2.3.3"
 datastorePreferencesCore = "1.2.1"
 junit = "4.13.2"
 koogAgents = "1.3.0"
 koogAgentsAdditions = "1.2.0-beta"
-kotlin = "2.4.10"
-ktor = "3.5.2"
+kotlin = "2.4.21"
+ktor = "3.6.0"
 ktorServerContentNegotiation = "3.6.0"
-logback = "1.6.3"
-material3 = "1.11.0-alpha07"
+logback = "1.6.5"
+material3 = "1.12.0-alpha03"
 koin = "4.2.2"
 navigation = "2.9.2"
 serialization = "1.11.0"
 room = "2.8.5"
-sqlite = "2.7.0"
+sqlite = "2.7.1"
 ksp = "2.3.10"
-exposed = "1.5.0"
-postgresql = "42.7.13"
+exposed = "1.6.0"
+postgresql = "42.7.14"
 bcrypt = "0.10.2"
 datastoreCore = "1.2.1"
 
 
 [libraries]
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferencesCore" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
+coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coilCompose" }
+compottie = { module = "io.github.alexzhirkevich:compottie", version.ref = "compottie" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
@@ -43,6 +48,7 @@ koin-logger-slf4j = { module = "io.insert-koin:koin-logger-slf4j", version.ref =
 
 koog-agents = { module = "ai.koog:koog-agents", version.ref = "koogAgents" }
 koog-agents-additions = { module = "ai.koog:koog-agents-additions", version.ref = "koogAgentsAdditions" }
+ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktorServerContentNegotiation" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorServerContentNegotiation" }
