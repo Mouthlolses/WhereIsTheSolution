@@ -55,7 +55,8 @@ val appModule = module {
     }
     single {
         PostService(
-            postRepository = get()
+            postRepository = get(),
+            imageStorage = get()
         )
     }
 }
