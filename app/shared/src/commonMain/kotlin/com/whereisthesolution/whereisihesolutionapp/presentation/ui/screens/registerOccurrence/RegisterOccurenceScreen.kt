@@ -49,7 +49,6 @@ import whereisthesolution.app.shared.generated.resources.add_location_icon
 import whereisthesolution.app.shared.generated.resources.arrow_back
 import whereisthesolution.app.shared.generated.resources.image_placeholder_take_photo
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun RegisterOccurrenceScreen(
     onBackScreen: () -> Unit = {},

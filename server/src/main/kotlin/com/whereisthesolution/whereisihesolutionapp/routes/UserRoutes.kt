@@ -1,23 +1,31 @@
 package com.whereisthesolution.whereisihesolutionapp.routes
 
-import com.whereisthesolution.whereisihesolutionapp.domain.model.post.CreatePostRequest
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.Post
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.PrivacyLevel
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.ReportCategory
 import com.whereisthesolution.whereisihesolutionapp.domain.model.user.login.LoginResponse
 import com.whereisthesolution.whereisihesolutionapp.dto.CreateUserRequest
+import com.whereisthesolution.whereisihesolutionapp.dto.ImageUpload
 import com.whereisthesolution.whereisihesolutionapp.dto.LoginRequest
 import com.whereisthesolution.whereisihesolutionapp.security.JwtService
 import com.whereisthesolution.whereisihesolutionapp.services.PostService
 import com.whereisthesolution.whereisihesolutionapp.services.UserService
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.PartData
+import io.ktor.http.content.forEachPart
+import io.ktor.server.application.log
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
+import io.ktor.server.request.receiveMultipart
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
+import io.ktor.utils.io.core.readBytes
+import io.ktor.utils.io.readBuffer
 
 fun Route.userRoutes(
     userService: UserService,
@@ -32,7 +40,6 @@ fun Route.userRoutes(
             call.respond(users)
         }
 
-        // criar usuário
         post("/register") {
             val request = call.receive<CreateUserRequest>()
 
@@ -48,7 +55,6 @@ fun Route.userRoutes(
             )
         }
 
-        // fazer login
         post("/auth/login") {
 
             val request = call.receive<LoginRequest>()
@@ -74,7 +80,6 @@ fun Route.userRoutes(
             )
         }
 
-        // buscar usuário
         get("/{id}") {
             val id = call.parameters["id"]?.toLongOrNull()
                 ?: return@get call.respond(HttpStatusCode.BadRequest)
@@ -102,44 +107,120 @@ fun Route.userRoutes(
                         HttpStatusCode.Unauthorized
                     )
 
-                val request = call.receive<CreatePostRequest>()
+                val multipart = call.receiveMultipart()
 
-                if (request.imageUrls.isEmpty()) {
-                    return@post call
-                        .respond(
-                            HttpStatusCode.BadRequest,
-                            "A ocorrência precisa ter pelo menos uma imagem."
-                        )
+                var title = ""
+                var description = ""
+                var category: ReportCategory = ReportCategory.OUTROS
+                var latitude: Double? = null
+                var longitude: Double? = null
+                var address = ""
+                var privacyLevel: PrivacyLevel = PrivacyLevel.PUBLIC_TO_COMMUNITY
+
+                val images = mutableListOf<ImageUpload>()
+
+                multipart.forEachPart { part ->
+                    when (part) {
+                        is PartData.FormItem -> {
+                            when (part.name) {
+                                "title" -> title = part.value
+                                "description" -> description = part.value
+                                "category" -> {
+                                    category = runCatching {
+                                        ReportCategory.valueOf(part.value)
+                                    }.getOrDefault(ReportCategory.OUTROS)
+                                }
+
+                                "latitude" -> latitude =
+                                    part.value.toDoubleOrNull()
+
+                                "longitude" -> longitude =
+                                    part.value.toDoubleOrNull()
+
+                                "address" -> address = part.value
+                                "privacyLevel" -> {
+                                    privacyLevel = runCatching {
+                                        PrivacyLevel.valueOf(part.value)
+                                    }.getOrDefault(PrivacyLevel.PUBLIC_TO_COMMUNITY)
+                                }
+                            }
+                        }
+
+                        is PartData.FileItem -> {
+                            if (part.name == "images") {
+                                val bytes = part.provider()
+                                    .readBuffer()
+                                    .readBytes()
+
+                                val contentType = part.contentType
+                                    ?.toString()
+                                    ?: "application/octet-stream"
+
+                                val extension = when (contentType) {
+                                    "image/jpeg" -> "jpg"
+                                    "image/png" -> "png"
+                                    "image/webp" -> "webp"
+                                    else -> ""
+                                }
+
+                                if (extension.isNotEmpty()) {
+                                    images.add(
+                                        ImageUpload(
+                                            bytes = bytes,
+                                            contentType = contentType,
+                                            extension = extension
+                                        )
+                                    )
+                                }
+                            }
+                        }
+
+                        else -> Unit
+                    }
+
+                    part.release()
                 }
+
+                if (images.isEmpty()) {
+                    return@post call.respond(
+                        HttpStatusCode.BadRequest,
+                        "A ocorrência precisa ter pelo menos uma imagem válida."
+                    )
+                }
+
+                if (latitude == null || longitude == null) {
+                    return@post call.respond(
+                        HttpStatusCode.BadRequest,
+                        "Latitude e longitude são obrigatórias."
+                    )
+                }
+
 
                 try {
                     val savedPost = postService.save(
                         post = Post(
                             id = 0,
                             userId = userId,
-                            title = request.title,
-                            description = request.description,
-                            category = request.category,
-                            latitude = request.latitude,
-                            longitude = request.longitude,
-                            address = request.address,
-                            privacyLevel = request.privacyLevel
+                            title = title,
+                            description = description,
+                            category = category,
+                            latitude = latitude!!,
+                            longitude = longitude!!,
+                            address = address,
+                            privacyLevel = privacyLevel
                         ),
-                        imageUrls = request.imageUrls
+                        images = images
                     )
 
                     call.respond(HttpStatusCode.Created, savedPost)
-
-                } catch (e: IllegalArgumentException) {
-                    call.respond(HttpStatusCode.BadRequest, e.message ?: "Dados inválidos")
                 } catch (e: Exception) {
-                    call.respond(
-                        HttpStatusCode.InternalServerError,
-                        e.message ?: "Erro ao criar a ocorrência"
+                    call.application.log.error(
+                        "Erro ao criar ocorrência",
+                        e
                     )
                 }
-
             }
+
 
             get("/get/allposts") {
 

@@ -1,5 +1,6 @@
 package com.whereisthesolution.whereisihesolutionapp.network.api
 
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.CreatePostRequest
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.PostResponse
 import com.whereisthesolution.whereisihesolutionapp.domain.model.user.login.LoginResponse
 import com.whereisthesolution.whereisihesolutionapp.network.config.NetworkConfig
@@ -12,8 +13,6 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 
@@ -29,9 +28,6 @@ class UserApi(
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }
-
-        println("STATUS: ${response.status}")
-        println("BODY: ${response.bodyAsText()}")
 
         return response.body()
 
@@ -49,6 +45,17 @@ class UserApi(
             .body()
     }
 
+    suspend fun createPost(
+        post: CreatePostRequest
+    ): PostResponse {
+        return client
+            .post("${NetworkConfig.BASE_URL}/posts/create") {
+                contentType(ContentType.Application.Json)
+                setBody(post)
+            }
+            .body()
+    }
+
     suspend fun getAllPosts(
         page: Int,
         pageSize: Int
@@ -61,6 +68,4 @@ class UserApi(
             }
             .body()
     }
-
-
 }

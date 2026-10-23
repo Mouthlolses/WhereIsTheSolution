@@ -1,4 +1,11 @@
 package com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.registerOccurrence
 
-class RegisterOccurrenceViewModel {
+import androidx.lifecycle.ViewModel
+import com.whereisthesolution.whereisihesolutionapp.repository.UserRepository
+
+class RegisterOccurrenceViewModel(
+    repository: UserRepository
+) : ViewModel() {
+
+
 }

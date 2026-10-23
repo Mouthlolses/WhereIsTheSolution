@@ -31,8 +31,10 @@ dependencies {
     implementation(libs.koog.agents)
     implementation(libs.koog.agents.additions)
 
-    implementation("io.ktor:ktor-server-auth-jwt:3.5.2")
-    implementation("com.auth0:java-jwt:4.5.0")
+    implementation(libs.ktor.server.auth.jwt)
+    implementation(libs.java.jwt)
+
+    implementation(libs.ktor.client.cio)
 
     implementation(libs.logback)
     implementation(libs.ktor.serverCore)

@@ -20,6 +20,7 @@ interface UserRepository {
     suspend fun registerUser(request: RegisterUserRequest): Result<User>
 
     suspend fun authenticateUser(request: AuthUserRequest): Result<User>
+
     fun observeLoggedUser(): Flow<User?>
 
     suspend fun savePost(page: Int, pageSize: Int)
