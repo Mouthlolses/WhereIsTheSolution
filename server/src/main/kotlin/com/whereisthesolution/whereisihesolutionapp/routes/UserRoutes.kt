@@ -3,9 +3,10 @@ package com.whereisthesolution.whereisihesolutionapp.routes
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.Post
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.PrivacyLevel
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.ReportCategory
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.image.CreatePostRequest
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.image.ImageUpload
 import com.whereisthesolution.whereisihesolutionapp.domain.model.user.login.LoginResponse
 import com.whereisthesolution.whereisihesolutionapp.dto.CreateUserRequest
-import com.whereisthesolution.whereisihesolutionapp.dto.ImageUpload
 import com.whereisthesolution.whereisihesolutionapp.dto.LoginRequest
 import com.whereisthesolution.whereisihesolutionapp.security.JwtService
 import com.whereisthesolution.whereisihesolutionapp.services.PostService
@@ -198,21 +199,25 @@ fun Route.userRoutes(
 
                 try {
                     val savedPost = postService.save(
-                        post = Post(
-                            id = 0,
-                            userId = userId,
-                            title = title,
-                            description = description,
-                            category = category,
-                            latitude = latitude!!,
-                            longitude = longitude!!,
-                            address = address,
-                            privacyLevel = privacyLevel
-                        ),
-                        images = images
+                        post = CreatePostRequest(
+                            post = Post(
+                                id = 0,
+                                userId = userId,
+                                title = title,
+                                description = description,
+                                category = category,
+                                latitude = latitude!!,
+                                longitude = longitude!!,
+                                address = address,
+                                privacyLevel = privacyLevel
+                            ),
+                            images = images
+                        )
                     )
 
-                    call.respond(HttpStatusCode.Created, savedPost)
+                    call.respond(
+                        HttpStatusCode.Created, savedPost
+                    )
                 } catch (e: Exception) {
                     call.application.log.error(
                         "Erro ao criar ocorrência",

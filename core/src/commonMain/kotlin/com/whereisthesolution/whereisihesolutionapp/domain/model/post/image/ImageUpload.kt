@@ -1,5 +1,8 @@
-package com.whereisthesolution.whereisihesolutionapp.dto
+package com.whereisthesolution.whereisihesolutionapp.domain.model.post.image
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ImageUpload(
     val bytes: ByteArray,
     val contentType: String,

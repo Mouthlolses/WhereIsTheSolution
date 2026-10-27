@@ -20,15 +20,19 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,42 +41,55 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.whereisthesolution.whereisihesolutionapp.config.decodeImage
 import com.whereisthesolution.whereisihesolutionapp.config.media.ImageResult
 import com.whereisthesolution.whereisihesolutionapp.config.rememberPlatformMediaPicker
 import com.whereisthesolution.whereisihesolutionapp.font.interFontFamily
+import kotlinx.coroutines.flow.Flow
 import org.jetbrains.compose.resources.painterResource
 import whereisthesolution.app.shared.generated.resources.Res
 import whereisthesolution.app.shared.generated.resources.add_location_icon
 import whereisthesolution.app.shared.generated.resources.arrow_back
-import whereisthesolution.app.shared.generated.resources.image_placeholder_take_photo
 
 @Composable
 fun RegisterOccurrenceScreen(
-    onBackScreen: () -> Unit = {},
-    onPublish: () -> Unit = {},
-    onAddLocation: () -> Unit = {},
+    uiState: OccurrenceUiState,
+    uiEvent: Flow<OccurrenceUiEvent>,
+    onBackScreen: () -> Unit,
+    onAddLocation: () -> Unit,
+    title: (String) -> Unit,
+    description: (String) -> Unit,
+    selectedImage: (ImageResult) -> Unit,
+    createPost: () -> Unit
 ) {
-
-    var selectedImage by remember {
-        mutableStateOf<ImageResult?>(null)
-    }
-
-    var description by remember {
-        mutableStateOf("")
-    }
-
     var locationName by remember {
         mutableStateOf<String?>(null)
     }
 
     val picker = rememberPlatformMediaPicker(
         onImageSelected = { image ->
-            selectedImage = image
+            selectedImage(image)
         }
     )
+
+    val snackBarState = remember {
+        SnackbarHostState()
+    }
+
+    LaunchedEffect(Unit) {
+        uiEvent.collect { event ->
+            when (event) {
+                OccurrenceUiEvent.ReturnFeedScreen -> {
+                    onBackScreen()
+                }
+
+                is OccurrenceUiEvent.CreatePostMessage -> {
+                    event.message.let { snackBarState.showSnackbar(it) }
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -103,6 +120,11 @@ fun RegisterOccurrenceScreen(
                 )
             }
         },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackBarState
+            )
+        },
         bottomBar = {
             Surface(
                 shadowElevation = 18.dp,
@@ -114,7 +136,9 @@ fun RegisterOccurrenceScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Button(
-                        onClick = { },
+                        onClick = {
+                            createPost()
+                        },
                         shapes = ButtonDefaults.shapes(
                             shape = RoundedCornerShape(12.dp),
                             pressedShape = RoundedCornerShape(12.dp)
@@ -127,15 +151,20 @@ fun RegisterOccurrenceScreen(
                             containerColor = Color(0xFF1769AA)
                         )
                     ) {
-                        Text("Compartilhar", fontFamily = interFontFamily())
+                        if (uiState.loading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        } else {
+                            Text("Compartilhar", fontFamily = interFontFamily())
+                        }
                     }
                     Spacer(modifier = Modifier.height(56.dp))
                 }
             }
         }
     ) { paddingValues ->
-
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -144,8 +173,6 @@ fun RegisterOccurrenceScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            // Preview da foto depois da captura
             Card(
                 onClick = { picker.launchCamera() },
                 modifier = Modifier
@@ -160,40 +187,53 @@ fun RegisterOccurrenceScreen(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if (selectedImage == null) {
-                        Image(
-                            painter = painterResource(Res.drawable.image_placeholder_take_photo),
-                            contentDescription = "place_holder_take_photo",
-                            modifier = Modifier
-                                .size(300.dp),
-                            contentScale = ContentScale.Crop
-                        )
-                    } else {
-                        selectedImage?.let { image ->
-                            val bitmap = remember(image) {
-                                decodeImage(image.bytes)
-                            }
+                    uiState.selectedImage?.let { image ->
+                        val bitmap = remember(image) {
+                            decodeImage(image.bytes)
+                        }
 
-                            bitmap?.let {
-                                Image(
-                                    bitmap = it,
-                                    contentDescription = "Preview da publicação",
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .aspectRatio(1f),
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
+                        bitmap?.let {
+                            Image(
+                                bitmap = it,
+                                contentDescription = "Preview da publicação",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(1f),
+                                contentScale = ContentScale.Crop
+                            )
                         }
                     }
                 }
             }
 
             OutlinedTextField(
-                value = description,
+                value = uiState.title,
+                onValueChange = {
+                    if (it.length <= 60) {
+                        title(it)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Escreva o Título do tema", fontFamily = interFontFamily()) },
+                supportingText = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Text(
+                            text = "${uiState.title.length}/60"
+                        )
+                    }
+                },
+                minLines = 1,
+                maxLines = 2
+            )
+
+            OutlinedTextField(
+                value = uiState.description,
                 onValueChange = {
                     if (it.length <= 200) {
-                        description = it
+                        description(it)
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -204,7 +244,7 @@ fun RegisterOccurrenceScreen(
                         horizontalArrangement = Arrangement.End
                     ) {
                         Text(
-                            text = "${description.length}/200"
+                            text = "${uiState.description.length}/200"
                         )
                     }
                 },
@@ -230,11 +270,4 @@ fun RegisterOccurrenceScreen(
             }
         }
     }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun RegisterOccurrenceScreenPreview() {
-    RegisterOccurrenceScreen()
 }

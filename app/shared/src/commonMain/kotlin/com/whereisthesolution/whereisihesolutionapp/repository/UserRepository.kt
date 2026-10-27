@@ -4,9 +4,12 @@ import com.whereisthesolution.whereisihesolutionapp.data.dao.UserDao
 import com.whereisthesolution.whereisihesolutionapp.data.entity.PostEntity
 import com.whereisthesolution.whereisihesolutionapp.data.mappers.toDomain
 import com.whereisthesolution.whereisihesolutionapp.data.mappers.toEntity
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.Post
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.image.ImageUpload
 import com.whereisthesolution.whereisihesolutionapp.domain.model.user.User
 import com.whereisthesolution.whereisihesolutionapp.network.api.UserApi
 import com.whereisthesolution.whereisihesolutionapp.network.dto.AuthUserRequest
+import com.whereisthesolution.whereisihesolutionapp.network.dto.CreatePostRequest
 import com.whereisthesolution.whereisihesolutionapp.network.dto.RegisterUserRequest
 import com.whereisthesolution.whereisihesolutionapp.session.SessionManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,6 +26,7 @@ interface UserRepository {
 
     fun observeLoggedUser(): Flow<User?>
 
+    suspend fun createPost(createPostRequest: CreatePostRequest): Result<Unit>
     suspend fun savePost(page: Int, pageSize: Int)
 
     fun observePosts(): Flow<List<PostEntity>>
@@ -94,6 +98,17 @@ class UserRepositoryImpl(
                         .map { it?.toDomain() }
                 }
             }
+    }
+
+    override suspend fun createPost(
+        createPostRequest: CreatePostRequest
+    ): Result<Unit> {
+        return try {
+            userApi.createPost(createPostRequest)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     override suspend fun savePost(

@@ -75,10 +75,11 @@ class HomeViewModel(
                     )
                 }
             }
-            .catch {
+            .catch { e ->
                 _uiState.update {
                     it.copy(loading = false)
                 }
+                _uiEvent.send(HomeUiEvent.ShowError(e.message))
             }
             .launchIn(
                 viewModelScope

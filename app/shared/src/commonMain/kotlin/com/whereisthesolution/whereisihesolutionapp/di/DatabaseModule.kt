@@ -7,6 +7,7 @@ import com.whereisthesolution.whereisihesolutionapp.data.database.AppDatabase
 import com.whereisthesolution.whereisihesolutionapp.network.api.UserApi
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.home.HomeViewModel
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.login.LoginViewModel
+import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.registerOccurrence.RegisterOccurrenceViewModel
 import com.whereisthesolution.whereisihesolutionapp.repository.UserRepository
 import com.whereisthesolution.whereisihesolutionapp.repository.UserRepositoryImpl
 import com.whereisthesolution.whereisihesolutionapp.session.SessionManager
@@ -50,6 +51,12 @@ val databaseModule = module {
 
     viewModel {
         HomeViewModel(
+            repository = get()
+        )
+    }
+
+    viewModel {
+        RegisterOccurrenceViewModel(
             repository = get()
         )
     }

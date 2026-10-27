@@ -11,6 +11,7 @@ import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.home
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.login.LoginScreenContainer
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.login.LoginViewModel
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.registerOccurrence.RegisterOccurrenceScreen
+import com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.registerOccurrence.RegisterOccurrenceViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -57,10 +58,21 @@ fun AppNavHost() {
             )
         }
         composable(route = "register-post") {
+
+            val viewModel: RegisterOccurrenceViewModel = koinViewModel()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
             RegisterOccurrenceScreen(
+                uiState = uiState,
                 onBackScreen = {
                     navController.popBackStack()
-                }
+                },
+                onAddLocation = { },
+                title = viewModel::onTitleChange,
+                description = viewModel::onDescriptionChange,
+                selectedImage = viewModel::selectedImage,
+                createPost = viewModel::createPost,
+                uiEvent = viewModel.uiEvent,
             )
         }
     }

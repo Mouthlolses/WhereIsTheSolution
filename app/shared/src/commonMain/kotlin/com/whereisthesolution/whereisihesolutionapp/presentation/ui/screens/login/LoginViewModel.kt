@@ -167,11 +167,8 @@ class LoginViewModel(
                 }
             }
         }
-
     }
-
 }
-
 
 data class LoginUiState(
     val loading: Boolean = false,

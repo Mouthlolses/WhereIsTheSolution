@@ -3,8 +3,9 @@ package com.whereisthesolution.whereisihesolutionapp.services
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.FeedPostResponse
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.Post
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.PostResponse
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.image.CreatePostRequest
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.image.ImageUpload
 import com.whereisthesolution.whereisihesolutionapp.domain.repository.PostRepository
-import com.whereisthesolution.whereisihesolutionapp.dto.ImageUpload
 import com.whereisthesolution.whereisihesolutionapp.storage.ImageStorage
 import com.whereisthesolution.whereisihesolutionapp.utils.toResponse
 import java.util.UUID
@@ -14,11 +15,10 @@ class PostService(
     private val imageStorage: ImageStorage
 ) {
     suspend fun save(
-        post: Post,
-        images: List<ImageUpload>
+        post: CreatePostRequest,
     ): PostResponse {
 
-        val imageUrl = images.map { image ->
+        val imageUrl = post.images.map { image ->
             val path = "posts/${UUID.randomUUID()}.${image.extension}"
 
             imageStorage.upload(
@@ -29,7 +29,7 @@ class PostService(
         }
 
         val savedPost = postRepository.createPost(
-            post = post,
+            post = post.post,
             imageUrls = imageUrl
         )
 

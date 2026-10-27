@@ -50,7 +50,7 @@ fun HomeScreen(
                 }
 
                 is HomeUiEvent.ShowError -> {
-                    snackBarState.showSnackbar("Error")
+                    event.message?.let { snackBarState.showSnackbar(it) }
                 }
             }
         }
@@ -70,14 +70,8 @@ fun HomeScreen(
                 topBar = {
                     CustomTopAppBar(
                         openUserModal = {
-                            try {
-                                println("Abrindo drawer")
-                                scope.launch {
-                                    drawerState.open()
-                                    println("Drawer aberto")
-                                }
-                            } catch (e: Exception) {
-                                println("Erro ao abrir drawer: ${e.stackTraceToString()}")
+                            scope.launch {
+                                drawerState.open()
                             }
                         },
                         openRegisterPost = {
