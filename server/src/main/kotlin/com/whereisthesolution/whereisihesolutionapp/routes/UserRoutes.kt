@@ -27,6 +27,8 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.utils.io.core.readBytes
 import io.ktor.utils.io.readBuffer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 fun Route.userRoutes(
     userService: UserService,
@@ -112,6 +114,7 @@ fun Route.userRoutes(
 
                 var title = ""
                 var description = ""
+                var postJson: String? = null
                 var category: ReportCategory = ReportCategory.OUTROS
                 var latitude: Double? = null
                 var longitude: Double? = null
@@ -124,6 +127,7 @@ fun Route.userRoutes(
                     when (part) {
                         is PartData.FormItem -> {
                             when (part.name) {
+                                "post" -> postJson = part.value
                                 "title" -> title = part.value
                                 "description" -> description = part.value
                                 "category" -> {
@@ -182,20 +186,32 @@ fun Route.userRoutes(
                     part.release()
                 }
 
+                postJson?.let { json ->
+                    val payload = runCatching {
+                        Json.decodeFromString<CreatePostPayload>(json)
+                    }.getOrElse {
+                        return@post call.respond(
+                            HttpStatusCode.BadRequest,
+                            "Dados da ocorrência inválidos."
+                        )
+                    }
+                    title = payload.title
+                    description = payload.description
+                }
+
+                if (title.isBlank() || description.isBlank()) {
+                    return@post call.respond(
+                        HttpStatusCode.BadRequest,
+                        "Título e descrição são obrigatórios."
+                    )
+                }
+
                 if (images.isEmpty()) {
                     return@post call.respond(
                         HttpStatusCode.BadRequest,
                         "A ocorrência precisa ter pelo menos uma imagem válida."
                     )
                 }
-
-                if (latitude == null || longitude == null) {
-                    return@post call.respond(
-                        HttpStatusCode.BadRequest,
-                        "Latitude e longitude são obrigatórias."
-                    )
-                }
-
 
                 try {
                     val savedPost = postService.save(
@@ -206,8 +222,8 @@ fun Route.userRoutes(
                                 title = title,
                                 description = description,
                                 category = category,
-                                latitude = latitude!!,
-                                longitude = longitude!!,
+                                latitude = latitude ?: 0.0,
+                                longitude = longitude ?: 0.0,
                                 address = address,
                                 privacyLevel = privacyLevel
                             ),
@@ -256,3 +272,9 @@ fun Route.userRoutes(
         }
     }
 }
+
+@Serializable
+private data class CreatePostPayload(
+    val title: String,
+    val description: String
+)

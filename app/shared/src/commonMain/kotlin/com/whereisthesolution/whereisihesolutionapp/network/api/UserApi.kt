@@ -9,6 +9,7 @@ import com.whereisthesolution.whereisihesolutionapp.network.dto.RegisterUserRequ
 import com.whereisthesolution.whereisihesolutionapp.network.dto.UserResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.statement.bodyAsText
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
@@ -19,7 +20,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
-import kotlinx.serialization.json.Json
+import io.ktor.http.isSuccess
 
 class UserApi(
     private val client: HttpClient
@@ -53,13 +54,13 @@ class UserApi(
     suspend fun createPost(
         createPostRequest: CreatePostRequest
     ): PostResponse {
-        return client
+        val response = client
             .post("${NetworkConfig.BASE_URL}/posts/create") {
-                contentType(ContentType.Application.Json)
                 setBody(
                     MultiPartFormDataContent(
                         formData {
-                            append("post", Json.encodeToString(createPostRequest))
+                            append("title", createPostRequest.title)
+                            append("description", createPostRequest.description)
 
                             createPostRequest.images?.forEach { image ->
                                 append(
@@ -81,7 +82,12 @@ class UserApi(
                     )
                 )
             }
-            .body()
+
+        if (!response.status.isSuccess()) {
+            error("Falha ao criar ocorrência (${response.status}): ${response.bodyAsText()}")
+        }
+
+        return response.body()
     }
 
     suspend fun getAllPosts(

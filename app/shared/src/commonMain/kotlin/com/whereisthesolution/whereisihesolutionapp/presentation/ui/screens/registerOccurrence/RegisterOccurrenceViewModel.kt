@@ -40,7 +40,16 @@ class RegisterOccurrenceViewModel(
 
     fun selectedImage(image: ImageResult) {
         _uiState.update {
-            it.copy(selectedImage = image)
+            it.copy(
+                selectedImage = image,
+                images = listOf(
+                    ImageUpload(
+                        bytes = image.bytes,
+                        contentType = image.mimeType,
+                        extension = image.fileName.substringAfterLast('.', "jpg")
+                    )
+                )
+            )
         }
     }
 
@@ -49,14 +58,12 @@ class RegisterOccurrenceViewModel(
 
         val title = state.title.trim()
         val description = state.description.trim()
-        val location = state.location.trim()
         val images = state.images
 
 
         val request = CreatePostRequest(
             title = title,
             description = description,
-            location = location,
             images = images
         )
 
@@ -71,6 +78,7 @@ class RegisterOccurrenceViewModel(
                         _uiEvent.send(OccurrenceUiEvent.ReturnFeedScreen)
                     }
                     .onFailure { e ->
+                        _uiState.update { it.copy(loading = false, errorMessage = e.message) }
                         _uiEvent.send(OccurrenceUiEvent.CreatePostMessage("Erro ao criar ocorrência: ${e.message}"))
                     }
             } catch (e: Exception) {
