@@ -12,6 +12,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.compose.ui.tooling.preview.Preview
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.components.CustomModalNavigationDrawer
 import com.whereisthesolution.whereisihesolutionapp.presentation.ui.components.CustomTopAppBar
@@ -25,6 +27,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     uiState: HomeUiState = HomeUiState(),
     uiEvent: Flow<HomeUiEvent> = flowOf(),
+    refreshPosts: () -> Unit = {},
     onNavigationToLogin: () -> Unit = {},
     onNavigationToRegisterPost: () -> Unit = {},
     logout: () -> Unit = {},
@@ -39,6 +42,10 @@ fun HomeScreen(
     )
 
     val snackBarState = remember { SnackbarHostState() }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        refreshPosts()
+    }
 
 
     LaunchedEffect(Unit) {

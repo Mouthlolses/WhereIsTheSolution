@@ -2,8 +2,7 @@ package com.whereisthesolution.whereisihesolutionapp.presentation.ui.screens.hom
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.whereisthesolution.whereisihesolutionapp.data.entity.PostEntity
-import com.whereisthesolution.whereisihesolutionapp.domain.model.post.PostResponse
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.FeedPostResponse
 import com.whereisthesolution.whereisihesolutionapp.domain.model.user.User
 import com.whereisthesolution.whereisihesolutionapp.repository.UserRepository
 import kotlinx.coroutines.channels.Channel
@@ -12,7 +11,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -30,60 +28,44 @@ class HomeViewModel(
 
     init {
         observeUser()
-        observePosts()
     }
 
     private fun observeUser() {
         repository
             .observeLoggedUser()
-            .onStart {
-                _uiState.update {
-                    it.copy(loading = true)
-                }
-            }
             .onEach { user ->
                 _uiState.update {
                     it.copy(
                         user = user,
-                        loading = false
                     )
                 }
             }
-            .catch {
-                _uiState.update {
-                    it.copy(loading = false)
-                }
+            .catch { e ->
+                _uiEvent.send(HomeUiEvent.ShowError(e.message))
             }
             .launchIn(
                 viewModelScope
             )
     }
 
-    private fun observePosts(){
-        repository
-            .observePosts()
-            .onStart {
-                _uiState.update {
-                    it.copy(loading = true)
-                }
-            }
-            .onEach { postEntities ->
+    fun refreshPosts() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(loading = true) }
+            try {
+                val posts = repository.getFeedPosts(page = 1, pageSize = 20)
                 _uiState.update {
                     it.copy(
-                        posts = postEntities,
+                        posts = posts,
                         loading = false
                     )
                 }
-            }
-            .catch { e ->
+            } catch (e: Exception) {
                 _uiState.update {
                     it.copy(loading = false)
                 }
                 _uiEvent.send(HomeUiEvent.ShowError(e.message))
             }
-            .launchIn(
-                viewModelScope
-            )
+        }
     }
 
     fun logout() {
@@ -105,8 +87,8 @@ class HomeViewModel(
 
 data class HomeUiState(
     val user: User? = null,
-    val posts: List<PostEntity?> = listOf(),
-    val loading: Boolean = false,
+    val posts: List<FeedPostResponse> = listOf(),
+    val loading: Boolean = true,
 )
 
 

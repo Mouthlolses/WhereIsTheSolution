@@ -53,11 +53,13 @@ fun FeedCity(
     LazyColumn(
         modifier = modifier
     ) {
-        items(uiState.posts) { postList ->
+        items(uiState.posts, key = { it.post.id }) { feedPost ->
             MockPostage(
-                userOwnerName = uiState.user?.name ?: "",
-                userOwnerCity = uiState.user?.city ?: "",
-                imageUrl = postList?.imageUrlsJson ?: "",
+                userOwnerName = feedPost.author?.name ?: "Usuário",
+                userOwnerCity = feedPost.post.address,
+                imageUrl = feedPost.post.imageUrls.firstOrNull().orEmpty(),
+                title = feedPost.post.title,
+                description = feedPost.post.description,
                 commentsLength = commentsLength,
             )
         }
@@ -70,6 +72,8 @@ fun MockPostage(
     userOwnerName: String,
     userOwnerCity: String,
     imageUrl: String,
+    title: String,
+    description: String,
     commentsLength: Int
 ) {
     Column(
@@ -243,7 +247,16 @@ fun MockPostage(
             )
 
             Text(
-                text = " Curtindo o Cariri! 🌴🔥",
+                text = " $title",
+                fontFamily = interFontFamily(),
+                fontSize = 14.sp
+            )
+        }
+
+        if (description.isNotBlank()) {
+            Text(
+                text = description,
+                modifier = Modifier.padding(horizontal = 16.dp),
                 fontFamily = interFontFamily(),
                 fontSize = 14.sp
             )

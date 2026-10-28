@@ -74,7 +74,7 @@ class PostRepositoryImpl : PostRepository {
             "Page size must be between 1 and 100"
         }
 
-        val offset = page * pageSize
+        val offset = (page - 1) * pageSize
 
         return transaction {
 
@@ -151,7 +151,7 @@ class PostRepositoryImpl : PostRepository {
         pageSize: Int
     ): List<PostResponse> {
 
-        val offset = page * pageSize
+        val offset = (page - 1) * pageSize
 
         return transaction {
 

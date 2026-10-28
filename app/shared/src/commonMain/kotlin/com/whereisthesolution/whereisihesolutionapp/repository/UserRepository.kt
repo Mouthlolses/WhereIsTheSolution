@@ -1,9 +1,9 @@
 package com.whereisthesolution.whereisihesolutionapp.repository
 
 import com.whereisthesolution.whereisihesolutionapp.data.dao.UserDao
-import com.whereisthesolution.whereisihesolutionapp.data.entity.PostEntity
 import com.whereisthesolution.whereisihesolutionapp.data.mappers.toDomain
 import com.whereisthesolution.whereisihesolutionapp.data.mappers.toEntity
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.FeedPostResponse
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.Post
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.image.ImageUpload
 import com.whereisthesolution.whereisihesolutionapp.domain.model.user.User
@@ -27,9 +27,7 @@ interface UserRepository {
     fun observeLoggedUser(): Flow<User?>
 
     suspend fun createPost(createPostRequest: CreatePostRequest): Result<Unit>
-    suspend fun savePost(page: Int, pageSize: Int)
-
-    fun observePosts(): Flow<List<PostEntity>>
+    suspend fun getFeedPosts(page: Int, pageSize: Int): List<FeedPostResponse>
 
     suspend fun logout()
 
@@ -111,23 +109,10 @@ class UserRepositoryImpl(
         }
     }
 
-    override suspend fun savePost(
+    override suspend fun getFeedPosts(
         page: Int,
         pageSize: Int
-    ) {
-        val posts = userApi.getAllPosts(page, pageSize)
-
-        val entities = posts.map { post ->
-            post.toEntity()
-        }
-
-        userDao.insertPosts(entities)
-
-    }
-
-    override fun observePosts(): Flow<List<PostEntity>> {
-        return userDao.observeAllPosts()
-    }
+    ): List<FeedPostResponse> = userApi.getAllPosts(page, pageSize)
 
     override suspend fun logout() {
         sessionManager.logout()

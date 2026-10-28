@@ -1,6 +1,7 @@
 package com.whereisthesolution.whereisihesolutionapp.network.api
 
 import com.whereisthesolution.whereisihesolutionapp.domain.model.post.PostResponse
+import com.whereisthesolution.whereisihesolutionapp.domain.model.post.FeedPostResponse
 import com.whereisthesolution.whereisihesolutionapp.domain.model.user.login.LoginResponse
 import com.whereisthesolution.whereisihesolutionapp.network.config.NetworkConfig
 import com.whereisthesolution.whereisihesolutionapp.network.dto.AuthUserRequest
@@ -93,7 +94,7 @@ class UserApi(
     suspend fun getAllPosts(
         page: Int,
         pageSize: Int
-    ): List<PostResponse> {
+    ): List<FeedPostResponse> {
         return client
             .get("${NetworkConfig.BASE_URL}/posts/get/allposts") {
                 parameter("page", page)

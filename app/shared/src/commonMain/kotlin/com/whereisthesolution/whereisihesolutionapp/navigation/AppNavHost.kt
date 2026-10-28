@@ -42,6 +42,7 @@ fun AppNavHost() {
             HomeScreen(
                 uiState = uiState,
                 uiEvent = viewmodel.uiEvent,
+                refreshPosts = viewmodel::refreshPosts,
                 onNavigationToLogin = {
                     navController
                         .navigate("login") {
