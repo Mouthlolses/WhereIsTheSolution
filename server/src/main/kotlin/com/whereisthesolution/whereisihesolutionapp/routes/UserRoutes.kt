@@ -239,6 +239,15 @@ fun Route.userRoutes(
                         "Erro ao criar ocorrência",
                         e
                     )
+                    call.respond(
+                        HttpStatusCode.BadGateway,
+                        mapOf(
+                            "error" to (
+                                e.message
+                                    ?: "Falha ao armazenar a imagem ou salvar a ocorrência."
+                                )
+                        )
+                    )
                 }
             }
 
