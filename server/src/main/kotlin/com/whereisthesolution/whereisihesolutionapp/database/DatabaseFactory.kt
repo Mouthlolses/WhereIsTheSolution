@@ -1,6 +1,8 @@
 package com.whereisthesolution.whereisihesolutionapp.database
 
 import com.whereisthesolution.whereisihesolutionapp.database.tables.UsersTable
+import com.whereisthesolution.whereisihesolutionapp.database.tables.PostsTable
+import com.whereisthesolution.whereisihesolutionapp.database.tables.PostImagesTable
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
@@ -24,7 +26,11 @@ object DatabaseFactory {
         )
 
         transaction {
-            SchemaUtils.create(UsersTable)
+            SchemaUtils.create(
+                UsersTable,
+                PostsTable,
+                PostImagesTable
+            )
         }
     }
 }
